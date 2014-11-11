@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>txt: Text + WordWrap Example</title>
+
+    <script type="text/javascript" src="../../dist/easeljs-NEXT.min.js"></script>
+    <script type="text/javascript" src="../../dist/txt.js"></script>
+    
+    <script type="text/javascript">
+    var canvas;
+    var stage;
+
+    var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+        return dpr / bsr;
+    })();
+
+    createHiDPICanvas = function(w, h, ratio) {
+        if (!ratio) { ratio = PIXEL_RATIO; }
+        var can = document.createElement("canvas");
+        can.width = w * ratio;
+        can.height = h * ratio;
+        can.style.width = w + "px";
+        can.style.height = h + "px";
+        can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+        return can;
+    }
+    
+
+    function init() {
+        
+        canvas = createHiDPICanvas( 1000 , 2000 , 1 );
+        console.log( canvas );
+        document.body.appendChild( canvas );
+        //canvas = document.getElementById('canvas');
+        stage = new createjs.Stage( canvas );
+        
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:260,
+            height:100,
+            size:20,
+            x:10,
+            y:0,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:250,
+            height:100,
+            size:20,
+            x:10,
+            y:100,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:240,
+            height:100,
+            size:20,
+            x:10,
+            y:200,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:230,
+            height:100,
+            size:20,
+            x:10,
+            y:300,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:220,
+            height:100,
+            size:20,
+            x:10,
+            y:400,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:210,
+            height:100,
+            size:20,
+            x:10,
+            y:500,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:200,
+            height:100,
+            size:20,
+            x:10,
+            y:600,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:190,
+            height:100,
+            size:20,
+            x:10,
+            y:700,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:180,
+            height:100,
+            size:20,
+            x:10,
+            y:800,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:170,
+            height:100,
+            size:20,
+            x:10,
+            y:900,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:160,
+            height:100,
+            size:20,
+            x:10,
+            y:1000,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:150,
+            height:100,
+            size:20,
+            x:10,
+            y:1100,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:140,
+            height:100,
+            size:20,
+            x:10,
+            y:1200,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:130,
+            height:100,
+            size:20,
+            x:10,
+            y:1300,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:120,
+            height:120,
+            size:20,
+            x:10,
+            y:1400,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:110,
+            height:120,
+            size:20,
+            x:10,
+            y:1520,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.addChild( new txt.CharacterText( { 
+            text:'Weekday, Month Day at Time\nLocation\nAddress - City, ST',
+            font:'lato',
+            width:100,
+            height:120,
+            size:20,
+            x:10,
+            y:1640,
+            complete:function(){console.log('====');},
+            debug:true
+        } ) );
+
+        stage.update();
+
+    }
+    </script>
+</head>
+<body onload="init()">
+</body>
+</html>

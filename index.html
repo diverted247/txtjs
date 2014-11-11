@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>txt</title>
+	<link rel="stylesheet" href="/site/pure-min.css">
+	<link rel="stylesheet" href="/site/base.css">
+	<script src="/dist/easeljs-NEXT.min.js"></script>
+	<script src="/dist/txt.js"></script>
+</head>
+<body onload="init()">
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <div class="pure-menu pure-menu-open">
+            <a class="pure-menu-heading" href="#">txt</a>
+
+            <ul>
+                <li><a href="https://github.com/diverted247/txt">Source</a></li>
+                <li><a href="#text">Text</a></li>
+                <li><a href="#charactertext">CharacterText</a></li>
+                <li><a href="#pathtext">PathText</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#warning">Warning</a></li>
+                <li><a href="#license">License</a></li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="header">
+            <h1>txt</h1>
+            <h2>A &lt;canvas&gt; font and typesetting engine for <a href="http://www.createjs.com/">CreateJS</a></h2>
+            <div id="example">
+            	
+            </div>
+        </div>
+
+        <div class="content">
+        	<p>
+        		<img width="100%" src="/site/architecture.png"/>
+        	</p>
+			<h2 class="content-subhead" id="text">Text</h2>
+            <p>
+              Text represents a Word centric textfield that wraps Word instances. 
+                <ul>
+                	<li>
+						<a href="/examples/Text/text.html">Basics</a>
+					</li>
+	                <li>
+						<a href="/examples/Text/moon.html">Performance - To the Moon</a>
+					</li>
+					<li>
+						<a href="/examples/Text/loadtest.html">Performance - Load Test</a>
+					</li>
+					<li>
+						<a href="/examples/Text/input.html">Performance - Input</a>
+					</li>
+					<li>
+						<a href="/examples/Text/case.html">Style - Typographic Case</a>
+					</li>
+					<li>
+						<a href="/examples/Text/perchar.html">Style - Character styling</a>
+					</li>
+					<li>
+						<a href="/examples/Text/percharfont.html">Style - Character styling with multiple fonts</a>
+					</li>
+					<li>
+						<a href="/examples/Text/ligatures.html">Style - Ligatures</a>
+					</li>
+					<li>
+						<a href="/examples/Text/spacing.html">Style - Spacing/Tracking</a>
+					</li>
+					<li>
+						<a href="/examples/Text/stroke.html">Style - Stoke and Outline</a>
+					</li>
+					<li>
+	                	<a href="/examples/Text/alignment.html">Alignment - Single line</a>
+	                </li>
+					<li>
+						<a href="/examples/Text/multiline_align.html">Alignment -Multi-line</a>
+					</li>
+					<li>
+						<a href="/examples/Text/multiline_align_breaks.html">Alignment - Multi-line with breaks</a>
+					</li>
+					<li>
+						<a href="/examples/Text/multiline_align_smallcaps.html">Alignment - Multi-line with smallcaps Case</a>
+					</li>
+					
+					<li>
+						<a href="/examples/Text/multiline_line_height_larger.html">Alignment - Multi-line with lineHeight larger</a>
+					</li>
+					<li>
+						<a href="/examples/Text/multiline_line_height_smaller.html">Alignment - Multi-line with lineHeight smaller</a>
+					</li>
+					<li>
+						<a href="/examples/Text/wordwrap.html">Alignment - Simple</a>
+					</li>
+	                <li>
+	                	<a href="/examples/Text/wordwrap_calc.html">Alignment - tuning</a>
+	                </li>
+	                <li>
+						<a href="/examples/Text/single_word_oneline.html">Alignment - First word</a>
+					</li>
+					<li>
+						<a href="/examples/Text/complete.html">Event - complete</a>
+					</li>
+					<li>
+						<a href="/examples/Text/text_change_font.html">Event - Swap fonts</a>
+					</li>
+				</ul>
+                
+            </p>
+
+            <h2 class="content-subhead" id="charactertext">CharacterText</h2>
+            <p>
+            CharacterText represents a "word-less" textfield that wraps per Character.
+                <ul>
+                	<li>
+						<a href="/examples/CharacterText/text.html">Basics</a>
+					</li>
+	                <li>
+						<a href="/examples/CharacterText/moon.html">Performance - To the Moon</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/loadtest.html">Performance - Load Test</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/input.html">Performance - Input</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/case.html">Style - Typographic Case</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/perchar.html">Style - Character styling</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/percharfont.html">Style - Character styling with multiple fonts</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/ligatures.html">Style - Ligatures</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/spacing.html">Style - Spacing/Tracking</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/stroke.html">Style - Stoke and Outline</a>
+					</li>
+					<li>
+	                	<a href="/examples/CharacterText/alignment.html">Alignment - Single line</a>
+	                </li>
+					<li>
+						<a href="/examples/CharacterText/multiline_align.html">Alignment -Multi-line</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/multiline_align_breaks.html">Alignment - Multi-line with breaks</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/multiline_align_smallcaps.html">Alignment - Multi-line with smallcaps Case</a>
+					</li>
+					
+					<li>
+						<a href="/examples/CharacterText/multiline_line_height_larger.html">Alignment - Multi-line with lineHeight larger</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/multiline_line_height_smaller.html">Alignment - Multi-line with lineHeight smaller</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/wordwrap.html">Alignment - Simple</a>
+					</li>
+	                <li>
+	                	<a href="/examples/CharacterText/wordwrap_calc.html">Alignment - tuning</a>
+	                </li>
+					<li>
+						<a href="/examples/CharacterText/complete.html">Event - complete</a>
+					</li>
+					<li>
+						<a href="/examples/CharacterText/text_change_font.html">Event - Swap fonts</a>
+					</li>
+				</ul>
+                
+            </p>
+
+            <h2 class="content-subhead" id="pathtext">PathText</h2>
+            <p>
+            PathText is experimental and currently dependent on generating a Point[] from an SVGPath element in batch (read slow loading). Development will focus on PathText in the next phase of development.
+                <ul>
+                	<li>
+						<a href="/examples/PathText/text.html">Basics</a>
+					</li>
+				</ul>
+                
+            </p>
+
+
+            <h2 class="content-subhead" id="about">About</h2>
+            <p>
+                Txt began as an experiment (on a dive trip) to improve the quality of text on &lt;canvas&gt; for web to print apps at Harland Clarke. The idea was to simply render character glyphs to &lt;canvas&gt; using SVGPath drawing commands and build up layout logic progressively. The result is a font  and typesetting engine extending CreateJS.
+            </p>
+            <p>
+            	There are many people and projects involved directly and indirectly in the creation and refinement of txt.
+            	<ul>
+            		<li>Ted Patrick</li>
+            		<li>Grant Pimpler</li>
+            		<li>Hossein Gonzoles</li>
+            		<li>Stephen Hahn</li>
+            		<li>Grant Skinner</li>
+            		<li>Branden Hall</li>
+            		<li><a href="https://github.com/ericdrowell/KineticJS/">SVGPath Initial Impl.</a></li>
+            		<li><a href="https://github.com/google/canvas-5-polyfill">SVGPath Arc Fix</a></li>
+            		
+            	</ul>
+
+
+            </p>
+
+            <h2 class="content-subhead" id="warning">Warning</h2>
+            <p>
+                Please do not misuse txt. It is intended for use for creative applications where style and layout exceed the capabilities of
+                DOM Text or SVG Text. It is not a replacement for DOM Text or SVG Text but rather improves text support on &lt;canvas&gt; for print and design applications.
+
+                Please do not steal fonts. Txt contains an exporter for the txt font format and a selection of fonts from the Google Font project licensed as Apache/Ubuntu/OFL. Please respect font owners and their licensed rights when using txt in production. 
+            </p>
+
+            <h2 class="content-subhead" id="license">License</h2>
+            <p>
+                Copyright (c) 2014, Ted Patrick LLC
+All rights reserved.</p>
+
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:</p>
+
+<p>
+	<ul>
+		<li>Redistributions of source code must retain the above copyright notice, this
+	  list of conditions and the following disclaimer.</li>
+
+		<li>Redistributions in binary form must reproduce the above copyright notice,
+	  this list of conditions and the following disclaimer in the documentation
+	  and/or other materials provided with the distribution.</li>
+
+	</ul>
+</p>
+
+<p>
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/site/menu.js"></script>
+<script type="text/javascript">
+    var canvas;
+    var stage;
+
+    var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+        return dpr / bsr;
+    })();
+
+    createHiDPICanvas = function(w, h, ratio) {
+        if (!ratio) { ratio = PIXEL_RATIO; }
+        var can = document.createElement("canvas");
+        can.width = w * ratio;
+        can.height = h * ratio;
+        can.style.width = w + "px";
+        can.style.height = h + "px";
+        can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+        return can;
+    }
+    
+
+    function init() {
+        
+        canvas = createHiDPICanvas( 500 , 200 , 2 );
+        document.getElementById('example').appendChild( canvas );
+        stage = new createjs.Stage(canvas);
+        
+        var text = new txt.Text( { 
+            text:'Written to <canvas> with txt. Welcome.',
+            font:'raleway',
+            align:txt.Align.MIDDLE_CENTER,
+            spacing:-4,
+            lineHeight:120,
+            width:1000,
+            height:400,
+            size:100,
+            x:0,
+            y:0
+        } );
+        
+        stage.addChild( text );
+
+        stage.update();
+
+    }
+
+</script>
+</body>
+</html>

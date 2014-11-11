@@ -1,0 +1,19 @@
+DO NOT STEAL FONTS.
+DO NOT EXPORT FONTS WITHOUT A PROPER LICENSE.
+
+
+1. Install Python, fontforge
+
+2. Place TTF or OTF fonts in "source_fonts" directory
+
+3. Run:
+
+    $ fontforge -script convert.pe source_fonts/*.ttf
+    $ fontforge -script convert.pe source_fonts/*.otf
+
+4. COPY .SVG Files from source_fonts to "svgff" directory
+
+5. Run: 
+    python main.py
+
+6. exported fonts are in the 'fonts' directory

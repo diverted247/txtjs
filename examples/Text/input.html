@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>txt: Text + Input Example</title>
+
+    <script type="text/javascript" src="../../dist/easeljs-NEXT.min.js"></script>
+    <script type="text/javascript" src="../../dist/txt.js"></script>
+   
+    <style>
+input {
+    border: 2px solid black; 
+    padding: 15px;
+    margin: 0 0 10px 0;
+}
+</style>
+    <script type="text/javascript">
+    var canvas;
+    var stage;
+    var textArray;
+    var domText;
+
+    var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+        return dpr / bsr;
+    })();
+
+    createHiDPICanvas = function(w, h, ratio) {
+        if (!ratio) { ratio = PIXEL_RATIO; }
+        var can = document.createElement("canvas");
+        can.width = w * ratio;
+        can.height = h * ratio;
+        can.style.width = w + "px";
+        can.style.height = h + "px";
+        can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+        return can;
+    }
+    
+    function domKeyPress(){
+        console.log( "domKeyPress()" );
+        for( var a in textArray ){
+            textArray[a].text = domText.value;
+            textArray[a].layout();
+        }
+    }
+
+    function init() {
+        
+        domText = document.getElementById("domText");
+        domText.onkeyup=domKeyPress;
+        canvas = createHiDPICanvas( 1500 , 1000 , 1 );
+        document.body.appendChild( canvas );
+        stage = new createjs.Stage( canvas );
+        stage.density = 2;
+        textArray = []
+
+        textArray.push( new txt.Text( {
+            text: domText.value + " 20",
+            font:'sourcesanspro',
+            align:txt.Align.TOP_RIGHT,
+            lineHeight:20,
+            width:850,
+            size:20,
+            x:10,
+            y:20
+        } ) );
+
+        textArray.push( new txt.Text( {
+            text: domText.value + " 24",
+            font:'sourcesanspro',
+            align:txt.Align.TOP_RIGHT,
+            lineHeight:24,
+            width:850,
+            size:24,
+            x:10,
+            y:50
+        } ) );
+
+        textArray.push( new txt.Text( {
+            text: domText.value + " 36",
+            font:'sourcesanspro',
+            align:txt.Align.TOP_RIGHT,
+            lineHeight:36,
+            width:850,
+            size:36,
+            x:10,
+            y:80
+        } ) );
+
+        textArray.push( new txt.Text( {
+            text: domText.value + " 48",
+            font:'sourcesanspro',
+            align:txt.Align.TOP_RIGHT,
+            lineHeight:48,
+            width:850,
+            size:48,
+            x:10,
+            y:120
+        } ) );
+
+        textArray.push( new txt.Text( {
+            text: domText.value + " 64",
+            font:'sourcesanspro',
+            align:txt.Align.TOP_RIGHT,
+            lineHeight:64,
+            width:850,
+            size:64,
+            x:10,
+            y:170
+        } ) );
+        
+        textArray.push( new txt.Text( {
+            text: domText.value + " 72",
+            font:'sourcesanspro',
+            align:txt.Align.TOP_RIGHT,
+            lineHeight:72,
+            width:850,
+            size:72,
+            x:10,
+            y:240
+        } ) );
+        
+        
+        stage.addChild( textArray[0] );
+        stage.addChild( textArray[1] );
+        stage.addChild( textArray[2] );
+        stage.addChild( textArray[3] );
+        stage.addChild( textArray[4] );
+        stage.addChild( textArray[5] );
+
+        stage.update();
+
+    }
+
+    </script>
+
+</head>
+<body onload="init()">
+<div><textarea id="domText" type="text" rows="4" cols="60">AWAY</textarea></div>
+</body>
+</html>

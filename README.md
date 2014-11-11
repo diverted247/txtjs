@@ -1,4 +1,6 @@
 txt
 ===
 
-A &lt;canvas> font and typesetting engine for @CreateJS.
+A &lt;canvas&gt; font and typesetting engine for @CreateJS.
+
+Site at http://txtjs.com.
