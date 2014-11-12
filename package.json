@@ -3,7 +3,7 @@
   "version": "0.8.0",
   "description": "A <canvas> font and typesetting engine for @CreateJS",
   "author": "Ted Patrick (http://tedpatrick.com)",
-  "license": "ISC",
+  "license": "BSD",
   "devDependencies": {
     "gulp": "^3.8.10",
     "gulp-connect": "^2.2.0",
