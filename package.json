@@ -1,5 +1,5 @@
 {
-  "name": "txt",
+  "name": "txtjs",
   "version": "0.8.0",
   "description": "A <canvas> font and typesetting engine for @CreateJS",
   "author": "Ted Patrick (http://tedpatrick.com)",
@@ -11,5 +11,5 @@
     "gulp-tsc": "^0.9.2",
     "typescript": "^1.1.0-1"
   },
-  "repository": "diverted247/txt"
+  "repository": "diverted247/txtjs"
 }
