@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>txt</title>
+	<title>txtjs</title>
 	<link rel="stylesheet" href="/site/pure-min.css">
 	<link rel="stylesheet" href="/site/base.css">
 	<script src="/dist/easeljs-NEXT.min.js"></script>
@@ -19,16 +19,16 @@
 
     <div id="menu">
         <div class="pure-menu pure-menu-open">
-            <a class="pure-menu-heading" href="#">txt</a>
+            <a class="pure-menu-heading" href="#">txtjs</a>
 
             <ul>
-                <li><a href="https://github.com/diverted247/txt">Source</a></li>
+                <li><a href="https://github.com/diverted247/txtjs">Source</a></li>
                 <li><a href="#text">Text</a></li>
                 <li><a href="#charactertext">CharacterText</a></li>
                 <li><a href="#pathtext">PathText</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#warning">Warning</a></li>
-                <li><a href="#license">License</a></li>
+                <li><a href="#license">License (BSD)</a></li>
                 
             </ul>
         </div>
@@ -36,7 +36,7 @@
 
     <div id="main">
         <div class="header">
-            <h1>txt</h1>
+            <h1>txtjs</h1>
             <h2>A &lt;canvas&gt; font and typesetting engine for <a href="http://www.createjs.com/">CreateJS</a></h2>
             <div id="example">
             	
@@ -202,17 +202,18 @@
 
             <h2 class="content-subhead" id="about">About</h2>
             <p>
-                Txt began as an experiment (on a dive trip) to improve the quality of text on &lt;canvas&gt; for web to print apps at Harland Clarke. The idea was to simply render character glyphs to &lt;canvas&gt; using SVGPath drawing commands and build up layout logic progressively. The result is a font  and typesetting engine extending CreateJS.
+                Txtjs began as an experiment (on a dive trip) to improve the quality of text on &lt;canvas&gt; for web to print apps at Harland Clarke. The idea was to simply render character glyphs to &lt;canvas&gt; using SVGPath drawing commands and build up layout logic progressively. The result is a font  and typesetting engine extending CreateJS.
             </p>
             <p>
-            	There are many people and projects involved directly and indirectly in the creation and refinement of txt.
+            	There are many people and projects involved directly and indirectly in the creation and refinement of txtjs.
             	<ul>
             		<li>Ted Patrick</li>
             		<li>Grant Pimpler</li>
-            		<li>Hossein Gonzoles</li>
+            		<li>Hossein Gonzales</li>
             		<li>Stephen Hahn</li>
             		<li>Grant Skinner</li>
             		<li>Branden Hall</li>
+				<li><a href="https://www.harlandclarke.com/">Harland Clarke</a></li>
             		<li><a href="https://github.com/ericdrowell/KineticJS/">SVGPath Initial Impl.</a></li>
             		<li><a href="https://github.com/google/canvas-5-polyfill">SVGPath Arc Fix</a></li>
             		
@@ -223,13 +224,13 @@
 
             <h2 class="content-subhead" id="warning">Warning</h2>
             <p>
-                Please do not misuse txt. It is intended for use for creative applications where style and layout exceed the capabilities of
+                Please do not misuse txtjs. It is intended for use for creative applications where style and layout exceed the capabilities of
                 DOM Text or SVG Text. It is not a replacement for DOM Text or SVG Text but rather improves text support on &lt;canvas&gt; for print and design applications.
 
-                Please do not steal fonts. Txt contains an exporter for the txt font format and a selection of fonts from the Google Font project licensed as Apache/Ubuntu/OFL. Please respect font owners and their licensed rights when using txt in production. 
+                Please do not steal fonts. Txtjs contains an exporter for the txtjs font format and a selection of fonts from the Google Font project licensed as Apache/Ubuntu/OFL. Please respect font owners and their licensed rights when using txtjs in production. 
             </p>
 
-            <h2 class="content-subhead" id="license">License</h2>
+            <h2 class="content-subhead" id="license">License (BSD)</h2>
             <p>
                 Copyright (c) 2014, Ted Patrick LLC
 All rights reserved.</p>
@@ -300,7 +301,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         stage = new createjs.Stage(canvas);
         
         var text = new txt.Text( { 
-            text:'Written to <canvas> with txt. Welcome.',
+            text:'Written to <canvas> with txtjs. Welcome.',
             font:'raleway',
             align:txt.Align.MIDDLE_CENTER,
             spacing:-4,
