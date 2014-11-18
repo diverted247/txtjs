@@ -60,7 +60,7 @@ module txt {
             
             //missing glyph
             if( this._glyph === undefined ){
-                console.log( "MISSING GLYPH:" + this.character );
+                //    console.log( "MISSING GLYPH:" + this.character );
                 this._glyph = this._font.glyphs[ 42 ];
             }
             this.graphics = this._glyph.graphic();

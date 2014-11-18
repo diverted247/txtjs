@@ -12,5 +12,10 @@ module txt {
         constructor(){
             super();
         }
+
+        //txt.CharacterText support
+        lastCharacter():txt.Character{
+            return <txt.Character>this.children[ this.children.length - 1 ];
+        }
     }
 }

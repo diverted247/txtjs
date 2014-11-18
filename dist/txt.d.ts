@@ -271,6 +271,7 @@ declare module txt {
         measuredHeight: number;
         spaceOffset: number;
         constructor();
+        lastCharacter(): Character;
     }
 }
 declare module txt {
@@ -280,6 +281,7 @@ declare module txt {
         fontSize: number;
         spacing: number;
         constructor();
+        lastWord(): Word;
         lastCharacter(): Character;
     }
 }

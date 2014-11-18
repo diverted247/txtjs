@@ -250,7 +250,7 @@ module txt {
             var currentLine = new txt.Line();
             this.lines.push( currentLine );
 
-            currentLine.y = this.words[ 0 ].measuredHeight;
+            currentLine.y = 0;//this.words[ 0 ].measuredHeight;
             
             var currentWord:Word;
             var lastHeight:number;
@@ -390,6 +390,13 @@ module txt {
             var measuredHeight = 0;
             var line;
             var a = txt.Align;
+            
+            var fnt:txt.Font = txt.FontLoader.getFont( this.font );
+            var aHeight = this.size * fnt.ascent / fnt.units;
+            var cHeight = this.size * fnt[ 'cap-height' ] / fnt.units;
+            var xHeight = this.size * fnt[ 'x-height' ] / fnt.units;
+            var dHeight = this.size * fnt.descent / fnt.units;
+            var lastCharOffset = 0;
 
             var len = this.lines.length;
             for( var i = 0; i < len; i++ ){
@@ -418,16 +425,17 @@ module txt {
 
             }
             
+            //TOP ALIGNED
             if( this.align === a.TOP_LEFT || this.align === a.TOP_CENTER || this.align === a.TOP_RIGHT  ){
-                var fnt:txt.Font = txt.FontLoader.getFont( this.font );
-                this.block.y = -this.lines[0].measuredHeight * ( fnt.units - fnt.ascent ) / fnt.units;
-                
-            }else if( this.align === a.BOTTOM_LEFT || this.align === a.BOTTOM_CENTER || this.align === a.BOTTOM_RIGHT  ){
-                this.block.y = this.height - measuredHeight;
-                
+                this.block.y = this.lines[ 0 ].measuredHeight * fnt.ascent / fnt.units + this.lines[ 0 ].measuredHeight * fnt.top / fnt.units;
+
+            //MIDDLE ALIGNED
             }else if( this.align === a.MIDDLE_LEFT || this.align === a.MIDDLE_CENTER || this.align === a.MIDDLE_RIGHT  ){
-                var fnt:txt.Font = txt.FontLoader.getFont( this.font );
-                this.block.y = ( this.height - measuredHeight - ( this.lines[ 0 ].measuredHeight * ( fnt.units - fnt.ascent ) / fnt.units ) ) / 2;
+                this.block.y = this.lines[ 0 ].measuredHeight + ( this.height - measuredHeight ) / 2 + this.lines[ 0 ].measuredHeight * fnt.middle / fnt.units ;
+            
+            //BOTTOM ALIGNED
+            }else if( this.align === a.BOTTOM_LEFT || this.align === a.BOTTOM_CENTER || this.align === a.BOTTOM_RIGHT  ){
+               this.block.y = this.height - this.lines[ this.lines.length - 1 ].y + this.lines[ 0 ].measuredHeight* fnt.bottom / fnt.units;
             }
 
         }

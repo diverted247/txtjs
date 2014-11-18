@@ -153,6 +153,18 @@ module txt {
                     font.cloneGlyph( 9679 , 8226 );
                     font.cloneGlyph( 9675 , 8226 );
 
+                    //define font adjustment values for font.top, font.middle, font.bottom
+                    if( font.top == undefined ){
+                        font.top = 0;
+                    }
+                    if( font.middle == undefined ){
+                        font.middle = 0;
+                    }
+                    if( font.bottom == undefined ){
+                        font.bottom = 0;
+                    }
+
+
                     //level the font metadata
                     var lLen = font.targets.length;
                     font.loaded = true;
