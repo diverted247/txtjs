@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>txt: Text + MultiLine Breaks Alignment Example</title>
+    <title>txt: Text + MultiLine Alignment Example</title>
 
     <script type="text/javascript" src="../../dist/easeljs-NEXT.min.js"></script>
     <script type="text/javascript" src="../../dist/txt.js"></script>
@@ -31,20 +31,21 @@
         can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
         return can;
     }
-    
+
 
     function init() {
-        
+
         canvas = createHiDPICanvas( 1000 , 1000 , 2 );
         document.body.appendChild( canvas );
-        
+
         stage = new createjs.Stage(canvas);
 
-                var text;
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        var text;
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.TOP_LEFT,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -55,10 +56,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+             text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.TOP_CENTER,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -69,10 +71,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.TOP_RIGHT,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -83,10 +86,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.MIDDLE_LEFT,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -97,10 +101,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.MIDDLE_CENTER,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -111,10 +116,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.MIDDLE_RIGHT,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -125,10 +131,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.BOTTOM_LEFT,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -139,10 +146,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.BOTTOM_CENTER,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,
@@ -153,10 +161,11 @@
 
         stage.addChild( text );
 
-        text = new txt.Text( {
-            text:'love me\nsome\npoiretone',
+        text = new txt.CharacterText( {
+            text:'love\nme some poirtone',
             font:'poiretone',
             align:txt.Align.BOTTOM_RIGHT,
+            lineHeight:70,
             width:400,
             height:400,
             size:100,

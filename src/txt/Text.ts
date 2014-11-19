@@ -10,7 +10,7 @@ module txt {
         characterCase:number = txt.Case.NORMAL;
         size:number = 12;
         font:string = "belinda";
-        spacing:number = 0;
+        tracking:number = 0;
         ligatures:boolean = false;
         fillColor:string = "#000";
         strokeColor:string = null;
@@ -60,12 +60,50 @@ module txt {
             // TODO - remove composite layout 
             this.removeAllChildren();
 
+            this.block = new createjs.Container()
+            this.addChild( this.block );
+            
+            //debug
+            //draw baseline, ascent, ascender, descender lines 
             if( this.debug == true ){
+                var font:txt.Font = txt.FontLoader.getFont( this.font );
+            
+                //outline
                 var s = new createjs.Shape();
                 s.graphics.beginStroke( "#FF0000" );
-                s.graphics.setStrokeStyle( 0.2 );
+                s.graphics.setStrokeStyle( 1.2 );
                 s.graphics.drawRect( 0 , 0 , this.width , this.height );
                 this.addChild( s );
+
+                //baseline
+                s = new createjs.Shape();
+                s.graphics.beginFill( "#000" );
+                s.graphics.drawRect( 0 , 0 , this.width , 0.2 );
+                s.x = 0;
+                s.y = 0;
+                this.block.addChild( s );
+
+                s = new createjs.Shape();
+                s.graphics.beginFill( "#F00" );
+                s.graphics.drawRect( 0 , 0 , this.width , 0.2 );
+                s.x = 0;
+                s.y = -font[ 'cap-height' ] / font.units * this.size;
+                this.block.addChild( s );
+
+                s = new createjs.Shape();
+                s.graphics.beginFill( "#0F0" );
+                s.graphics.drawRect( 0 , 0 , this.width , 0.2 );
+                s.x = 0;
+                s.y = -font.ascent / font.units * this.size;
+                this.block.addChild( s );
+
+                s = new createjs.Shape();
+                s.graphics.beginFill( "#00F" );
+                s.graphics.drawRect( 0 , 0 , this.width , 0.2 );
+                s.x = 0;
+                s.y = -font.descent / font.units * this.size;
+                this.block.addChild( s );
+            
             }
             
             if( this.text === "" || this.text === undefined ){
@@ -74,8 +112,6 @@ module txt {
                 return;
             }
 
-            this.block = new createjs.Container()
-            this.addChild( this.block );
             if( this.characterLayout() === false ){
                 this.removeAllChildren();
                 return;
@@ -90,13 +126,15 @@ module txt {
         //place characters in words
         characterLayout():boolean {
 
+            //characterlayout adds Charcters to words and measures true height. LineHeight is not a factor til Line layout.
+
             //char layout
             var len = this.text.length;
             var char:Character;
             var defaultStyle = {
                 size: this.size,
                 font: this.font,
-                spacing: this.spacing,
+                tracking: this.tracking,
                 characterCase: this.characterCase,
                 fillColor: this.fillColor,
                 strokeColor: this.strokeColor,
@@ -106,7 +144,7 @@ module txt {
             var hPosition:number = 0;
             var vPosition:number = 0;
             var charKern:number;
-            var spacing:number;
+            var tracking:number;
 
             var currentWord:Word = new Word();
             // push a new word to capture characters
@@ -121,7 +159,7 @@ module txt {
                     // make sure style contains properties needed.
                     if( currentStyle.size === undefined ) currentStyle.size = defaultStyle.size;
                     if( currentStyle.font === undefined ) currentStyle.font = defaultStyle.font;
-                    if( currentStyle.spacing === undefined ) currentStyle.spacing = defaultStyle.spacing;
+                    if( currentStyle.tracking === undefined ) currentStyle.tracking = defaultStyle.tracking;
                     if( currentStyle.characterCase === undefined ) currentStyle.characterCase = defaultStyle.characterCase;
                     if( currentStyle.fillColor === undefined ) currentStyle.fillColor = defaultStyle.fillColor;
                     if( currentStyle.strokeColor === undefined ) currentStyle.strokeColor = defaultStyle.strokeColor;
@@ -165,8 +203,8 @@ module txt {
                 }
 
                 //swap character if ligature
-                //ligatures removed if spacing or this.ligatures is false
-                if( currentStyle.spacing == 0 && this.ligatures == true ){
+                //ligatures removed if tracking or this.ligatures is false
+                if( currentStyle.tracking == 0 && this.ligatures == true ){
                     //1 char match
                     var ligTarget = this.text.substr( i , 4 );
                     if( char._font.ligatures[ ligTarget.charAt( 0 ) ] ){
@@ -207,7 +245,7 @@ module txt {
 
                     currentWord.hasSpace = true;
                     currentWord.spaceOffset = ( char._glyph.offset * char.size );
-                    hPosition = char.x + ( char._glyph.offset * char.size ) + char.characterCaseOffset + ( char.spacing / char._font.units * char.size ) + char._glyph.getKerning( this.text.charCodeAt( i + 1 ) , char.size );
+                    hPosition = char.x + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning( this.text.charCodeAt( i + 1 ) , char.size );
                     currentWord.measuredWidth = hPosition;
                     currentWord.measuredHeight = vPosition;
                     hPosition = 0;
@@ -226,7 +264,7 @@ module txt {
                     currentWord.hasHyphen = true;
                 }
 
-                hPosition = char.x + ( char._glyph.offset * char.size ) + char.characterCaseOffset + ( char.spacing / char._font.units * char.size ) + char._glyph.getKerning( this.text.charCodeAt( i + 1 ) , char.size );
+                hPosition = char.x + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning( this.text.charCodeAt( i + 1 ) , char.size );
 
             }
             //case of empty word at end.
@@ -250,7 +288,7 @@ module txt {
             var currentLine = new txt.Line();
             this.lines.push( currentLine );
 
-            currentLine.y = 0;//this.words[ 0 ].measuredHeight;
+            currentLine.y = 0;
             
             var currentWord:Word;
             var lastHeight:number;
@@ -281,6 +319,7 @@ module txt {
                     }else{
                         lastHeight = currentLine.y + vPosition;
                     }
+
                     currentLine.measuredWidth = hPosition;
                     lastLineWord = this.words[i - 1];
                     
@@ -390,19 +429,24 @@ module txt {
             var measuredHeight = 0;
             var line;
             var a = txt.Align;
-            
             var fnt:txt.Font = txt.FontLoader.getFont( this.font );
             var aHeight = this.size * fnt.ascent / fnt.units;
             var cHeight = this.size * fnt[ 'cap-height' ] / fnt.units;
             var xHeight = this.size * fnt[ 'x-height' ] / fnt.units;
             var dHeight = this.size * fnt.descent / fnt.units;
-            var lastCharOffset = 0;
 
             var len = this.lines.length;
             for( var i = 0; i < len; i++ ){
 
                 line = this.lines[ i ];
+
+                //correct measuredWidth if last line character contains tracking
+                if( line.lastWord().lastCharacter() ){
+                    line.measuredWidth -= line.lastWord().lastCharacter().trackingOffset();
+                }
+
                 measuredHeight += line.measuredHeight;
+
                 if( this.align === a.TOP_CENTER ){
                     //move to center
                     line.x = ( this.width - line.measuredWidth ) / 2;
@@ -422,7 +466,6 @@ module txt {
                     //move to right
                     line.x = ( this.width - line.measuredWidth );
                 }
-
             }
             
             //TOP ALIGNED

@@ -6,7 +6,7 @@ module txt {
         characterCase:number = txt.Case.NORMAL;
         size:number = 12;
         font:string = "belinda";
-        spacing:number = 0;
+        tracking:number = 0;
         ligatures:boolean = false;
         fillColor:string = "#000";
         strokeColor:string = null;
@@ -91,7 +91,7 @@ module txt {
             var defaultStyle = {
                 size: this.size,
                 font: this.font,
-                spacing: this.spacing,
+                tracking: this.tracking,
                 characterCase: this.characterCase,
                 fillColor: this.fillColor,
                 strokeColor: this.strokeColor,
@@ -100,7 +100,7 @@ module txt {
             var currentStyle = defaultStyle;
             var hPosition:number = 0;
             var charKern:number;
-            var spacing:number;
+            var tracking:number;
             var point:any[];
             var p0Distance:number;
             var p0:Point;
@@ -119,7 +119,7 @@ module txt {
                     // make sure style contains properties needed.
                     if( currentStyle.size === undefined ) currentStyle.size = defaultStyle.size;
                     if( currentStyle.font === undefined ) currentStyle.font = defaultStyle.font;
-                    if( currentStyle.spacing === undefined ) currentStyle.spacing = defaultStyle.spacing;
+                    if( currentStyle.tracking === undefined ) currentStyle.tracking = defaultStyle.tracking;
                     if( currentStyle.characterCase === undefined ) currentStyle.characterCase = defaultStyle.characterCase;
                     if( currentStyle.fillColor === undefined ) currentStyle.fillColor = defaultStyle.fillColor;
                     if( currentStyle.strokeColor === undefined ) currentStyle.strokeColor = defaultStyle.strokeColor;
@@ -141,8 +141,8 @@ module txt {
                 char = new Character( this.text.charAt( i ) , currentStyle , i );
 
                 //swap character if ligature
-                //ligatures removed if spacing or this.ligatures is false
-                if( currentStyle.spacing == 0 && this.ligatures == true ){
+                //ligatures removed if tracking or this.ligatures is false
+                if( currentStyle.tracking == 0 && this.ligatures == true ){
                     //1 char match
                     var ligTarget = this.text.substr( i , 4 );
                     if( char._font.ligatures[ ligTarget.charAt( 0 ) ] ){
@@ -174,7 +174,7 @@ module txt {
                 // push character into block
                 this.characters.push( char );
                 this.block.addChild( char );
-                hPosition = hPosition + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.spacingOffset() + char._glyph.getKerning( this.getCharCodeAt( i + 1 ) , char.size );
+                hPosition = hPosition + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning( this.getCharCodeAt( i + 1 ) , char.size );
 
             }
 

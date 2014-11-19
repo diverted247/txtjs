@@ -4,9 +4,6 @@ module txt {
     
         measuredWidth:number;
         measuredHeight:number;
-        fontSize:number;
-        spacing:number;
-
         
         constructor(){
             super();

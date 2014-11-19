@@ -2,7 +2,7 @@ declare module txt {
     interface Style {
         size: number;
         font: string;
-        spacing: number;
+        tracking: number;
         characterCase: number;
         fillColor: string;
         strokeColor: string;
@@ -17,7 +17,7 @@ declare module txt {
         width?: number;
         lineHeight?: number;
         font?: string;
-        spacing?: number;
+        tracking?: number;
         characterCase?: number;
         fillColor?: string;
         strokeColor?: string;
@@ -39,7 +39,7 @@ declare module txt {
         characterCase: number;
         size: number;
         font: string;
-        spacing: number;
+        tracking: number;
         ligatures: boolean;
         fillColor: string;
         strokeColor: string;
@@ -65,7 +65,7 @@ declare module txt {
         character: string;
         characterCode: number;
         font: string;
-        spacing: number;
+        tracking: number;
         characterCase: number;
         characterCaseOffset: number;
         index: number;
@@ -80,7 +80,7 @@ declare module txt {
         _font: Font;
         constructor(character: string, style: {}, index?: number, glyph?: Glyph);
         setGlyph(glyph: Glyph): void;
-        spacingOffset(): number;
+        trackingOffset(): number;
         draw(ctx: CanvasRenderingContext2D): boolean;
         getWidth(): number;
     }
@@ -209,7 +209,7 @@ declare module txt {
         size: number;
         minSize: number;
         font: string;
-        spacing: number;
+        tracking: number;
         ligatures: boolean;
         fillColor: string;
         strokeColor: string;
@@ -237,7 +237,7 @@ declare module txt {
         characterCase: number;
         size: number;
         font: string;
-        spacing: number;
+        tracking: number;
         ligatures: boolean;
         fillColor: string;
         strokeColor: string;
@@ -278,8 +278,6 @@ declare module txt {
     class Line extends createjs.Container {
         measuredWidth: number;
         measuredHeight: number;
-        fontSize: number;
-        spacing: number;
         constructor();
         lastWord(): Word;
         lastCharacter(): Character;

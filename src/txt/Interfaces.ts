@@ -3,7 +3,7 @@ module txt {
     export interface Style {
         size:number;
         font:string;
-        spacing:number;
+        tracking:number;
         characterCase:number;
         fillColor:string;
         strokeColor:string;
@@ -19,7 +19,7 @@ module txt {
         width?:number;
         lineHeight?:number;
         font?:string;
-        spacing?:number;
+        tracking?:number;
         characterCase?:number;
         fillColor?:string;
         strokeColor?:string;

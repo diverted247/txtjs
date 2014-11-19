@@ -19,7 +19,7 @@ var txt;
             this.characterCase = txt.Case.NORMAL;
             this.size = 12;
             this.font = "belinda";
-            this.spacing = 0;
+            this.tracking = 0;
             this.ligatures = false;
             this.fillColor = "#000";
             this.strokeColor = null;
@@ -61,20 +61,45 @@ var txt;
             this.words = [];
             this.lines = [];
             this.removeAllChildren();
+            this.block = new createjs.Container();
+            this.addChild(this.block);
             if (this.debug == true) {
+                var font = txt.FontLoader.getFont(this.font);
                 var s = new createjs.Shape();
                 s.graphics.beginStroke("#FF0000");
-                s.graphics.setStrokeStyle(0.2);
+                s.graphics.setStrokeStyle(1.2);
                 s.graphics.drawRect(0, 0, this.width, this.height);
                 this.addChild(s);
+                s = new createjs.Shape();
+                s.graphics.beginFill("#000");
+                s.graphics.drawRect(0, 0, this.width, 0.2);
+                s.x = 0;
+                s.y = 0;
+                this.block.addChild(s);
+                s = new createjs.Shape();
+                s.graphics.beginFill("#F00");
+                s.graphics.drawRect(0, 0, this.width, 0.2);
+                s.x = 0;
+                s.y = -font['cap-height'] / font.units * this.size;
+                this.block.addChild(s);
+                s = new createjs.Shape();
+                s.graphics.beginFill("#0F0");
+                s.graphics.drawRect(0, 0, this.width, 0.2);
+                s.x = 0;
+                s.y = -font.ascent / font.units * this.size;
+                this.block.addChild(s);
+                s = new createjs.Shape();
+                s.graphics.beginFill("#00F");
+                s.graphics.drawRect(0, 0, this.width, 0.2);
+                s.x = 0;
+                s.y = -font.descent / font.units * this.size;
+                this.block.addChild(s);
             }
             if (this.text === "" || this.text === undefined) {
                 this.render();
                 this.complete();
                 return;
             }
-            this.block = new createjs.Container();
-            this.addChild(this.block);
             if (this.characterLayout() === false) {
                 this.removeAllChildren();
                 return;
@@ -90,7 +115,7 @@ var txt;
             var defaultStyle = {
                 size: this.size,
                 font: this.font,
-                spacing: this.spacing,
+                tracking: this.tracking,
                 characterCase: this.characterCase,
                 fillColor: this.fillColor,
                 strokeColor: this.strokeColor,
@@ -100,7 +125,7 @@ var txt;
             var hPosition = 0;
             var vPosition = 0;
             var charKern;
-            var spacing;
+            var tracking;
             var currentWord = new txt.Word();
             this.words.push(currentWord);
             for (var i = 0; i < len; i++) {
@@ -110,8 +135,8 @@ var txt;
                         currentStyle.size = defaultStyle.size;
                     if (currentStyle.font === undefined)
                         currentStyle.font = defaultStyle.font;
-                    if (currentStyle.spacing === undefined)
-                        currentStyle.spacing = defaultStyle.spacing;
+                    if (currentStyle.tracking === undefined)
+                        currentStyle.tracking = defaultStyle.tracking;
                     if (currentStyle.characterCase === undefined)
                         currentStyle.characterCase = defaultStyle.characterCase;
                     if (currentStyle.fillColor === undefined)
@@ -144,7 +169,7 @@ var txt;
                 if (char.measuredHeight > vPosition) {
                     vPosition = char.measuredHeight;
                 }
-                if (currentStyle.spacing == 0 && this.ligatures == true) {
+                if (currentStyle.tracking == 0 && this.ligatures == true) {
                     var ligTarget = this.text.substr(i, 4);
                     if (char._font.ligatures[ligTarget.charAt(0)]) {
                         if (char._font.ligatures[ligTarget.charAt(0)][ligTarget.charAt(1)]) {
@@ -170,7 +195,7 @@ var txt;
                 if (this.text.charAt(i) == " ") {
                     currentWord.hasSpace = true;
                     currentWord.spaceOffset = (char._glyph.offset * char.size);
-                    hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + (char.spacing / char._font.units * char.size) + char._glyph.getKerning(this.text.charCodeAt(i + 1), char.size);
+                    hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning(this.text.charCodeAt(i + 1), char.size);
                     currentWord.measuredWidth = hPosition;
                     currentWord.measuredHeight = vPosition;
                     hPosition = 0;
@@ -182,7 +207,7 @@ var txt;
                 if (this.text.charAt(i) == "-") {
                     currentWord.hasHyphen = true;
                 }
-                hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + (char.spacing / char._font.units * char.size) + char._glyph.getKerning(this.text.charCodeAt(i + 1), char.size);
+                hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning(this.text.charCodeAt(i + 1), char.size);
             }
             if (currentWord.children.length == 0) {
                 var lw = this.words.pop();
@@ -317,10 +342,12 @@ var txt;
             var cHeight = this.size * fnt['cap-height'] / fnt.units;
             var xHeight = this.size * fnt['x-height'] / fnt.units;
             var dHeight = this.size * fnt.descent / fnt.units;
-            var lastCharOffset = 0;
             var len = this.lines.length;
             for (var i = 0; i < len; i++) {
                 line = this.lines[i];
+                if (line.lastWord().lastCharacter()) {
+                    line.measuredWidth -= line.lastWord().lastCharacter().trackingOffset();
+                }
                 measuredHeight += line.measuredHeight;
                 if (this.align === a.TOP_CENTER) {
                     line.x = (this.width - line.measuredWidth) / 2;
@@ -366,7 +393,7 @@ var txt;
             this.character = '';
             this.characterCode = null;
             this.font = null;
-            this.spacing = null;
+            this.tracking = null;
             this.characterCase = null;
             this.characterCaseOffset = 0;
             this.index = null;
@@ -433,12 +460,12 @@ var txt;
             this._glyph = glyph;
             this.graphics = this._glyph.graphic();
         };
-        Character.prototype.spacingOffset = function () {
+        Character.prototype.trackingOffset = function () {
             var unitSpacingFactor = 0;
             if (this._font.units > 1000) {
                 unitSpacingFactor = (this._font.units - 1000) / 250;
             }
-            return this._font.units / 1000 * (this.spacing + unitSpacingFactor) / this._font.units * this.size;
+            return this._font.units / 1000 * (this.tracking + unitSpacingFactor) / this._font.units * this.size;
         };
         Character.prototype.draw = function (ctx) {
             this._glyph._fill.style = this.fillColor;
@@ -1128,7 +1155,7 @@ var txt;
             this.size = 12;
             this.minSize = 6;
             this.font = "belinda";
-            this.spacing = 0;
+            this.tracking = 0;
             this.ligatures = false;
             this.fillColor = "#000";
             this.strokeColor = null;
@@ -1176,8 +1203,8 @@ var txt;
             }
             this.block = new createjs.Container();
             this.addChild(this.block);
-            var font = txt.FontLoader.getFont(this.font);
             if (this.debug == true) {
+                var font = txt.FontLoader.getFont(this.font);
                 var s = new createjs.Shape();
                 s.graphics.beginStroke("#FF0000");
                 s.graphics.setStrokeStyle(1.2);
@@ -1225,18 +1252,18 @@ var txt;
             var len = this.text.length;
             var width = this.width;
             var font = txt.FontLoader.fonts[this.font];
-            var spacing = 0;
-            if (this.spacing > 0) {
-                spacing = this.spacing / font.units * len;
+            var tracking = 0;
+            if (this.tracking > 0) {
+                tracking = this.tracking / font.units * len;
             }
-            if (width < len * size * font.default / font.units + spacing) {
+            if (width < len * size * font.default / font.units + tracking) {
                 if (count == 0) {
-                    this.size = Math.ceil(((width - spacing) / len * font.units / font.default) * 1.2);
-                    this.spacing = Math.floor(this.spacing * this.size / size);
+                    this.size = Math.ceil(((width - tracking) / len * font.units / font.default) * 1.2);
+                    this.tracking = Math.floor(this.tracking * this.size / size);
                 }
                 else {
                     this.size--;
-                    this.spacing = Math.floor(this.spacing * this.size / size);
+                    this.tracking = Math.floor(this.tracking * this.size / size);
                 }
                 if (this.size < this.minSize) {
                     this.size = this.minSize;
@@ -1245,7 +1272,7 @@ var txt;
                 this.autoSizeMeasure(count + 1);
                 if (count == 0) {
                     this.size--;
-                    this.spacing = Math.floor(this.spacing * this.size / size);
+                    this.tracking = Math.floor(this.tracking * this.size / size);
                     if (this.size < this.minSize) {
                         this.size = this.minSize;
                     }
@@ -1258,7 +1285,7 @@ var txt;
             var defaultStyle = {
                 size: this.size,
                 font: this.font,
-                spacing: this.spacing,
+                tracking: this.tracking,
                 characterCase: this.characterCase,
                 fillColor: this.fillColor,
                 strokeColor: this.strokeColor,
@@ -1268,7 +1295,7 @@ var txt;
             var hPosition = 0;
             var vPosition = 0;
             var charKern;
-            var spacing;
+            var tracking;
             var lineY = 0;
             var firstLine = true;
             var currentLine = new txt.Line();
@@ -1281,8 +1308,8 @@ var txt;
                         currentStyle.size = defaultStyle.size;
                     if (currentStyle.font === undefined)
                         currentStyle.font = defaultStyle.font;
-                    if (currentStyle.spacing === undefined)
-                        currentStyle.spacing = defaultStyle.spacing;
+                    if (currentStyle.tracking === undefined)
+                        currentStyle.tracking = defaultStyle.tracking;
                     if (currentStyle.characterCase === undefined)
                         currentStyle.characterCase = defaultStyle.characterCase;
                     if (currentStyle.fillColor === undefined)
@@ -1347,7 +1374,7 @@ var txt;
                 else if (char.measuredHeight > vPosition) {
                     vPosition = char.measuredHeight;
                 }
-                if (currentStyle.spacing == 0 && this.ligatures == true) {
+                if (currentStyle.tracking == 0 && this.ligatures == true) {
                     var ligTarget = this.text.substr(i, 4);
                     if (char._font.ligatures[ligTarget.charAt(0)]) {
                         if (char._font.ligatures[ligTarget.charAt(0)][ligTarget.charAt(1)]) {
@@ -1371,10 +1398,10 @@ var txt;
                 if (hPosition + char.measuredWidth > this.width) {
                     var lastchar = currentLine.children[currentLine.children.length - 1];
                     if (lastchar.characterCode == 32) {
-                        currentLine.measuredWidth = hPosition - lastchar.measuredWidth - lastchar.spacingOffset() - lastchar._glyph.getKerning(this.getCharCodeAt(i), lastchar.size);
+                        currentLine.measuredWidth = hPosition - lastchar.measuredWidth - lastchar.trackingOffset() - lastchar._glyph.getKerning(this.getCharCodeAt(i), lastchar.size);
                     }
                     else {
-                        currentLine.measuredWidth = hPosition - lastchar.spacingOffset() - lastchar._glyph.getKerning(this.getCharCodeAt(i), lastchar.size);
+                        currentLine.measuredWidth = hPosition - lastchar.trackingOffset() - lastchar._glyph.getKerning(this.getCharCodeAt(i), lastchar.size);
                     }
                     if (firstLine === true) {
                         currentLine.measuredHeight = vPosition;
@@ -1393,7 +1420,7 @@ var txt;
                         hPosition = 0;
                     }
                     else {
-                        hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + char.spacingOffset();
+                        hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + char.trackingOffset();
                     }
                     this.lines.push(currentLine);
                     this.block.addChild(currentLine);
@@ -1402,7 +1429,7 @@ var txt;
                 else {
                     char.x = hPosition;
                     currentLine.addChild(char);
-                    hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + char.spacingOffset() + char._glyph.getKerning(this.getCharCodeAt(i + 1), char.size);
+                    hPosition = char.x + (char._glyph.offset * char.size) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning(this.getCharCodeAt(i + 1), char.size);
                 }
             }
             if (currentLine.children.length == 0) {
@@ -1459,31 +1486,27 @@ var txt;
             var cHeight = this.size * fnt['cap-height'] / fnt.units;
             var xHeight = this.size * fnt['x-height'] / fnt.units;
             var dHeight = this.size * fnt.descent / fnt.units;
-            var lastCharOffset = 0;
             var len = this.lines.length;
             for (var i = 0; i < len; i++) {
                 line = this.lines[i];
-                measuredHeight += line.measuredHeight;
                 if (line.lastCharacter()) {
-                    lastCharOffset = line.lastCharacter().spacingOffset();
+                    line.measuredWidth -= line.lastCharacter().trackingOffset();
                 }
-                else {
-                    lastCharOffset = 0;
-                }
+                measuredHeight += line.measuredHeight;
                 if (this.align === a.TOP_CENTER) {
-                    line.x = (this.width - line.measuredWidth + lastCharOffset) / 2;
+                    line.x = (this.width - line.measuredWidth) / 2;
                 }
                 else if (this.align === a.TOP_RIGHT) {
                     line.x = (this.width - line.measuredWidth);
                 }
                 else if (this.align === a.MIDDLE_CENTER) {
-                    line.x = (this.width - line.measuredWidth + lastCharOffset) / 2;
+                    line.x = (this.width - line.measuredWidth) / 2;
                 }
                 else if (this.align === a.MIDDLE_RIGHT) {
                     line.x = (this.width - line.measuredWidth);
                 }
                 else if (this.align === a.BOTTOM_CENTER) {
-                    line.x = (this.width - line.measuredWidth + lastCharOffset) / 2;
+                    line.x = (this.width - line.measuredWidth) / 2;
                 }
                 else if (this.align === a.BOTTOM_RIGHT) {
                     line.x = (this.width - line.measuredWidth);
@@ -1519,7 +1542,7 @@ var txt;
             this.characterCase = txt.Case.NORMAL;
             this.size = 12;
             this.font = "belinda";
-            this.spacing = 0;
+            this.tracking = 0;
             this.ligatures = false;
             this.fillColor = "#000";
             this.strokeColor = null;
@@ -1585,7 +1608,7 @@ var txt;
             var defaultStyle = {
                 size: this.size,
                 font: this.font,
-                spacing: this.spacing,
+                tracking: this.tracking,
                 characterCase: this.characterCase,
                 fillColor: this.fillColor,
                 strokeColor: this.strokeColor,
@@ -1594,7 +1617,7 @@ var txt;
             var currentStyle = defaultStyle;
             var hPosition = 0;
             var charKern;
-            var spacing;
+            var tracking;
             var point;
             var p0Distance;
             var p0;
@@ -1610,8 +1633,8 @@ var txt;
                         currentStyle.size = defaultStyle.size;
                     if (currentStyle.font === undefined)
                         currentStyle.font = defaultStyle.font;
-                    if (currentStyle.spacing === undefined)
-                        currentStyle.spacing = defaultStyle.spacing;
+                    if (currentStyle.tracking === undefined)
+                        currentStyle.tracking = defaultStyle.tracking;
                     if (currentStyle.characterCase === undefined)
                         currentStyle.characterCase = defaultStyle.characterCase;
                     if (currentStyle.fillColor === undefined)
@@ -1629,7 +1652,7 @@ var txt;
                     return false;
                 }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
-                if (currentStyle.spacing == 0 && this.ligatures == true) {
+                if (currentStyle.tracking == 0 && this.ligatures == true) {
                     var ligTarget = this.text.substr(i, 4);
                     if (char._font.ligatures[ligTarget.charAt(0)]) {
                         if (char._font.ligatures[ligTarget.charAt(0)][ligTarget.charAt(1)]) {
@@ -1653,7 +1676,7 @@ var txt;
                 char.hPosition = hPosition;
                 this.characters.push(char);
                 this.block.addChild(char);
-                hPosition = hPosition + (char._glyph.offset * char.size) + char.characterCaseOffset + char.spacingOffset() + char._glyph.getKerning(this.getCharCodeAt(i + 1), char.size);
+                hPosition = hPosition + (char._glyph.offset * char.size) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning(this.getCharCodeAt(i + 1), char.size);
             }
             var offsetStart = Math.round((pointLength * pathDistance - hPosition) / 2);
             len = this.characters.length;

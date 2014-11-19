@@ -5,7 +5,7 @@ module txt {
         character:string = '';
         characterCode:number = null;
         font:string = null;
-        spacing:number = null;
+        tracking:number = null;
         characterCase:number = null;
         characterCaseOffset:number = 0;
         index:number = null;
@@ -92,12 +92,12 @@ module txt {
             this.graphics = this._glyph.graphic();
         }
 
-        spacingOffset():number {
+        trackingOffset():number {
             var unitSpacingFactor = 0;
             if( this._font.units > 1000 ){
                 unitSpacingFactor = ( this._font.units - 1000 ) / 250;
             }
-            return this._font.units / 1000 * ( this.spacing + unitSpacingFactor ) / this._font.units * this.size;
+            return this._font.units / 1000 * ( this.tracking + unitSpacingFactor ) / this._font.units * this.size;
         }
 
         draw( ctx:CanvasRenderingContext2D ):boolean {
