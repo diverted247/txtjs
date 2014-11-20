@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>txt: Text + Single Word Example</title>
+    <title>txt: Text + MultiLine Alignment Example</title>
 
     <script type="text/javascript" src="../../dist/easeljs-NEXT.min.js"></script>
     <script type="text/javascript" src="../../dist/txt.js"></script>
@@ -30,7 +30,7 @@
         can.style.height = h + "px";
         can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
         return can;
-    }
+    };
 
 
     function init() {
@@ -42,12 +42,13 @@
 
         var text;
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+            text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.TOP_LEFT,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:0,
             y:0,
             debug:true
@@ -56,12 +57,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+            text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.TOP_CENTER,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:410,
             y:0,
             debug:true
@@ -70,12 +72,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+           text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.TOP_RIGHT,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:820,
             y:0,
             debug:true
@@ -84,12 +87,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+            text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.MIDDLE_LEFT,
-            width:115.2541,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:0,
             y:410,
             debug:true
@@ -98,12 +102,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+           text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.MIDDLE_CENTER,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:410,
             y:410,
             debug:true
@@ -112,12 +117,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+           text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.MIDDLE_RIGHT,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:820,
             y:410,
             debug:true
@@ -126,12 +132,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+            text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.BOTTOM_LEFT,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:0,
             y:820,
             debug:true
@@ -140,12 +147,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+            text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.BOTTOM_CENTER,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:410,
             y:820,
             debug:true
@@ -154,12 +162,13 @@
         stage.addChild( text );
 
         text = new txt.Text( {
-            text:'Save',
-            font:'lato',
+            text:'TTT YYY\nWWW',
+            font:'opensans',
             align:txt.Align.BOTTOM_RIGHT,
-            width:115,
-            height:73,
-            size:52,
+            width:400,
+            height:400,
+            size:150,
+            tracking: 0,
             x:820,
             y:820,
             debug:true

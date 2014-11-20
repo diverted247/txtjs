@@ -276,7 +276,7 @@ var txt;
                     }
                     continue;
                 }
-                else if (hPosition + currentWord.measuredWidth > this.width && i > 0) {
+                else if (hPosition + currentWord.measuredWidth > this.width && i > 0 && currentLine.children.length > 0) {
                     if (this.lineHeight != null) {
                         lastHeight = currentLine.y + this.lineHeight;
                     }
@@ -345,7 +345,7 @@ var txt;
             var len = this.lines.length;
             for (var i = 0; i < len; i++) {
                 line = this.lines[i];
-                if (line.lastWord().lastCharacter()) {
+                if (line.lastWord() != undefined && line.lastWord().lastCharacter()) {
                     line.measuredWidth -= line.lastWord().lastCharacter().trackingOffset();
                 }
                 measuredHeight += line.measuredHeight;

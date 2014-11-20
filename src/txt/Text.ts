@@ -354,8 +354,7 @@ module txt {
                 }else
 
                 //wrap word to new line if length
-                if( hPosition + currentWord.measuredWidth > this.width && i > 0 ){
-                    
+                if( hPosition + currentWord.measuredWidth > this.width && i > 0 && currentLine.children.length > 0 ){
                     if( this.lineHeight != null ){
                         lastHeight = currentLine.y + this.lineHeight;
                     }else{
@@ -441,7 +440,7 @@ module txt {
                 line = this.lines[ i ];
 
                 //correct measuredWidth if last line character contains tracking
-                if( line.lastWord().lastCharacter() ){
+                if( line.lastWord() != undefined && line.lastWord().lastCharacter() ){
                     line.measuredWidth -= line.lastWord().lastCharacter().trackingOffset();
                 }
 

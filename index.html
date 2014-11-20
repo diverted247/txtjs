@@ -26,6 +26,7 @@
                 <li><a href="#text">Text</a></li>
                 <li><a href="#charactertext">CharacterText</a></li>
                 <li><a href="#pathtext">PathText</a></li>
+                <li><a href="#graphics">Graphics</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#warning">Warning</a></li>
                 <li><a href="#license">License (BSD)</a></li>
@@ -104,14 +105,17 @@
                         <a href="/examples/Text/single_word_center_align_tracking.html">Alignment - Tracking</a>
                     </li>
 					<li>
-						<a href="/examples/Text/wordwrap.html">Alignment - Simple</a>
+						<a href="/examples/Text/wordwrap.html">Alignment - Wordwrap simple</a>
 					</li>
 	                <li>
-	                	<a href="/examples/Text/wordwrap_calc.html">Alignment - tuning</a>
+	                	<a href="/examples/Text/wordwrap_calc.html">Alignment - Wordwrap tuning</a>
 	                </li>
 	                <li>
-						<a href="/examples/Text/single_word_oneline.html">Alignment - First word</a>
+						<a href="/examples/Text/single_word_oneline.html">Alignment - Wordwrap first word</a>
 					</li>
+                    <li>
+                        <a href="/examples/Text/wordwrap_natural_newline.html">Alignment - Wordwrap natural and newlines</a>
+                    </li>
 					<li>
 						<a href="/examples/Text/complete.html">Event - complete</a>
 					</li>
@@ -179,11 +183,17 @@
                         <a href="/examples/CharacterText/single_word_center_align_tracking.html">Alignment - Tracking</a>
                     </li>
 					<li>
-						<a href="/examples/CharacterText/wordwrap.html">Alignment - Simple</a>
-					</li>
-	                <li>
-	                	<a href="/examples/CharacterText/wordwrap_calc.html">Alignment - tuning</a>
-	                </li>
+                        <a href="/examples/CharacterText/wordwrap.html">Alignment - Wordwrap simple</a>
+                    </li>
+                    <li>
+                        <a href="/examples/CharacterText/wordwrap_calc.html">Alignment - Wordwrap tuning</a>
+                    </li>
+                    <li>
+                        <a href="/examples/CharacterText/single_word_oneline.html">Alignment - Wordwrap first word</a>
+                    </li>
+                    <li>
+                        <a href="/examples/CharacterText/wordwrap_natural_newline.html">Alignment - Wordwrap natural and newlines</a>
+                    </li>
 					<li>
 						<a href="/examples/CharacterText/complete.html">Event - complete</a>
 					</li>
@@ -202,6 +212,23 @@
 						<a href="/examples/PathText/text.html">Basics</a>
 					</li>
 				</ul>
+                
+            </p>
+
+            <h2 class="content-subhead" id="graphics">Graphics</h2>
+            <p>
+            Graphics extends CreateJS's Graphics Class with the ability to render SVGPath. SVGPath is the basis for all Character and Glyph rendering/caching but can be used directly. These tests are identical to the W3C SVG Tests for SVGPath drawing. The only exception is lack of support for winding rules and 'oddeven' syntax.
+                <ul>
+                    <li>
+                        <a href="/examples/Graphics/pathGraphics.html">W3C Test 1</a>
+                    </li>
+                    <li>
+                        <a href="/examples/Graphics/pathGraphics2.html">W3C Test 2</a>
+                    </li>
+                    <li>
+                        <a href="/examples/Graphics/pathGraphics3.html">Glyph Rendering (inverted)</a>
+                    </li>
+                </ul>
                 
             </p>
 
@@ -307,7 +334,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         stage = new createjs.Stage(canvas);
         
         var text = new txt.Text( { 
-            text:'Written to <canvas> with txtjs. Welcome.',
+            text:'Written to <canvas> with txtjs. Welcome.\nv0.8.3',
             font:'raleway',
             align:txt.Align.MIDDLE_CENTER,
             tracking:-5,
