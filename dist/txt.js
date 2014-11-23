@@ -255,7 +255,12 @@ var txt;
                     if (lastLineWord != undefined && lastLineWord.hasSpace) {
                         currentLine.measuredWidth -= lastLineWord.spaceOffset;
                     }
-                    currentLine.measuredHeight = vPosition;
+                    if (firstLine == false && this.lineHeight != null) {
+                        currentLine.measuredHeight = this.lineHeight;
+                    }
+                    else {
+                        currentLine.measuredHeight = vPosition;
+                    }
                     firstLine = false;
                     currentLine = new txt.Line();
                     this.lines.push(currentLine);
@@ -265,11 +270,21 @@ var txt;
                     this.block.addChild(currentLine);
                     var swapWord = this.words[i];
                     currentLine.addChild(swapWord);
-                    currentLine.measuredHeight = swapWord.measuredHeight;
+                    if (this.lineHeight != null) {
+                        currentLine.measuredHeight = this.lineHeight;
+                    }
+                    else {
+                        currentLine.measuredHeight = swapWord.measuredHeight;
+                    }
                     currentLine.measuredWidth = swapWord.measuredWidth;
                     currentLine = new txt.Line();
                     this.lines.push(currentLine);
-                    currentLine.y = lastHeight + vPosition;
+                    if (this.lineHeight != null) {
+                        currentLine.y = lastHeight + this.lineHeight;
+                    }
+                    else {
+                        currentLine.y = lastHeight + vPosition;
+                    }
                     this.block.addChild(currentLine);
                     if (i < len - 1) {
                         vPosition = 0;
@@ -288,7 +303,12 @@ var txt;
                     if (lastLineWord != undefined && lastLineWord.hasSpace) {
                         currentLine.measuredWidth -= lastLineWord.spaceOffset;
                     }
-                    currentLine.measuredHeight = vPosition;
+                    if (firstLine == false && this.lineHeight != null) {
+                        currentLine.measuredHeight = this.lineHeight;
+                    }
+                    else {
+                        currentLine.measuredHeight = vPosition;
+                    }
                     firstLine = false;
                     currentLine = new txt.Line();
                     this.lines.push(currentLine);
@@ -308,7 +328,12 @@ var txt;
                         lastHeight = currentLine.y + vPosition;
                     }
                     currentLine.measuredWidth = hPosition + currentWord.measuredWidth;
-                    currentLine.measuredHeight = vPosition;
+                    if (firstLine == false && this.lineHeight != null) {
+                        currentLine.measuredHeight = this.lineHeight;
+                    }
+                    else {
+                        currentLine.measuredHeight = vPosition;
+                    }
                     currentLine.addChild(this.words[i]);
                     firstLine = false;
                     currentLine = new txt.Line();

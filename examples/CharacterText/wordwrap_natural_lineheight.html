@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>txt: CharacterText + Alignment Wordwrap Natural and LineHeight</title>
+
+    <script type="text/javascript" src="../../dist/easeljs-NEXT.min.js"></script>
+    <script type="text/javascript" src="../../dist/txt.js"></script>
+
+    <script type="text/javascript">
+    var canvas;
+    var stage;
+
+    var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+        return dpr / bsr;
+    })();
+
+    createHiDPICanvas = function(w, h, ratio) {
+        if (!ratio) { ratio = PIXEL_RATIO; }
+        var can = document.createElement("canvas");
+        can.width = w * ratio;
+        can.height = h * ratio;
+        can.style.width = w + "px";
+        can.style.height = h + "px";
+        can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+        return can;
+    }
+    
+
+    function init() {
+        
+        canvas = createHiDPICanvas( 1000 , 1000 , 2 );
+        document.body.appendChild( canvas );
+        stage = new createjs.Stage(canvas);
+        
+        var text = new txt.CharacterText( { 
+            text:'123 444 555\n6',
+            font:'lato',
+            align:4,
+            tracking:0,
+            lineHeight:38.4,
+            ligatures:false,
+            width:123.86006745195687,
+            height:146.61010452961662,
+            size:32,
+            debug:true,
+            x:10,
+            y:10
+        } );
+        text.scaleX = text.scaleY = 10;
+        
+        stage.addChild( text );
+
+        stage.update();
+
+    }
+
+    </script>
+
+</head>
+<body onload="init()">
+</body>
+</html>
