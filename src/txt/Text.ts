@@ -313,7 +313,7 @@ module txt {
                 }
 
                 //exceeds line width && has new line
-                if( hPosition + currentWord.measuredWidth > this.width && currentWord.hasNewLine == true ){
+                if( hPosition + currentWord.measuredWidth > this.width && currentWord.hasNewLine == true && currentLine.children.length > 0 ){
                     if( this.lineHeight != null ){
                         lastHeight = currentLine.y + this.lineHeight;
                     }else{
