@@ -1358,7 +1358,6 @@ var txt;
                     if (this.minSize != null && this.size < this.minSize) {
                         this.size = this.minSize;
                     }
-                    console.log("REDUCE SIZE");
                     return;
                 }
             }
@@ -1375,7 +1374,6 @@ var txt;
                         this.tracking = trackMetric;
                     }
                     this.size = this.original.size;
-                    console.log("EXPAND TRACKING");
                     return;
                 }
                 if (trackMetric < this.original.tracking && this.autoReduce) {
@@ -1386,7 +1384,6 @@ var txt;
                         this.tracking = trackMetric;
                     }
                     this.size = this.original.size;
-                    console.log("REDUCE TRACKING");
                     return;
                 }
             }

@@ -258,7 +258,7 @@ module txt {
                     if( this.minSize != null && this.size < this.minSize ){
                         this.size = this.minSize;
                     }
-                    console.log( "REDUCE SIZE")
+                    //console.log( "REDUCE SIZE")
                     return;
                 }
             //tracking cases
@@ -275,7 +275,7 @@ module txt {
                         this.tracking = trackMetric;
                     }
                     this.size = this.original.size;
-                    console.log( "EXPAND TRACKING")
+                    //console.log( "EXPAND TRACKING")
                     return;
                 }
                 //autoreduce tracking case
@@ -286,7 +286,7 @@ module txt {
                         this.tracking = trackMetric;
                     }
                     this.size = this.original.size;
-                    console.log( "REDUCE TRACKING")
+                    //console.log( "REDUCE TRACKING")
                     return;
                 }
             }
