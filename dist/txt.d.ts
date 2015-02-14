@@ -76,10 +76,10 @@ declare module txt {
         measuredWidth: number;
         measuredHeight: number;
         hPosition: number;
-        _glyph: Glyph;
-        _font: Font;
-        constructor(character: string, style: {}, index?: number, glyph?: Glyph);
-        setGlyph(glyph: Glyph): void;
+        _glyph: txt.Glyph;
+        _font: txt.Font;
+        constructor(character: string, style: {}, index?: number, glyph?: txt.Glyph);
+        setGlyph(glyph: txt.Glyph): void;
         trackingOffset(): number;
         draw(ctx: CanvasRenderingContext2D): boolean;
         getWidth(): number;
@@ -128,7 +128,7 @@ declare module txt {
         static fonts: any;
         static loaders: any;
         static isLoaded(name: string): boolean;
-        static getFont(name: string): Font;
+        static getFont(name: string): txt.Font;
         static load(target: any, fonts: string[]): void;
         static check(id: number): void;
         static loadFont(fontName: string, loader: any): void;
@@ -208,16 +208,22 @@ declare module txt {
         characterCase: number;
         size: number;
         minSize: number;
+        maxTracking: number;
         font: string;
         tracking: number;
         ligatures: boolean;
         fillColor: string;
         strokeColor: string;
         strokeWidth: number;
-        autoSize: boolean;
+        singleLine: boolean;
+        autoExpand: boolean;
+        autoReduce: boolean;
+        overset: boolean;
+        oversetIndex: number;
         loaderId: number;
         style: Style[];
         debug: boolean;
+        original: ConstructObj;
         lines: Line[];
         block: createjs.Container;
         constructor(props?: ConstructObj);
@@ -225,7 +231,9 @@ declare module txt {
         fontLoaded(): void;
         render(): void;
         layout(): void;
-        autoSizeMeasure(count?: number): void;
+        autoMeasure(): void;
+        trackingOffset(tracking: number, size: number, units: number): number;
+        offsetTracking(offset: number, size: number, units: number): number;
         characterLayout(): boolean;
         getCharCodeAt(index: number): number;
         lineLayout(): void;
@@ -245,7 +253,7 @@ declare module txt {
         style: Style[];
         debug: boolean;
         points: any[];
-        characters: Character[];
+        characters: txt.Character[];
         path: string;
         start: number;
         center: number;
@@ -271,7 +279,7 @@ declare module txt {
         measuredHeight: number;
         spaceOffset: number;
         constructor();
-        lastCharacter(): Character;
+        lastCharacter(): txt.Character;
     }
 }
 declare module txt {
@@ -279,7 +287,7 @@ declare module txt {
         measuredWidth: number;
         measuredHeight: number;
         constructor();
-        lastWord(): Word;
-        lastCharacter(): Character;
+        lastWord(): txt.Word;
+        lastCharacter(): txt.Character;
     }
 }

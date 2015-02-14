@@ -459,6 +459,7 @@ var txt;
                 this._glyph = this._font.glyphs[String.fromCharCode(this.characterCode).toUpperCase().charCodeAt(0)];
             }
             if (this._glyph === undefined) {
+                console.log("MISSING GLYPH:" + this.character);
                 this._glyph = this._font.glyphs[42];
             }
             this.graphics = this._glyph.graphic();
@@ -486,11 +487,7 @@ var txt;
             this.graphics = this._glyph.graphic();
         };
         Character.prototype.trackingOffset = function () {
-            var unitSpacingFactor = 0;
-            if (this._font.units > 1000) {
-                unitSpacingFactor = (this._font.units - 1000) / 250;
-            }
-            return this._font.units / 1000 * (this.tracking + unitSpacingFactor) / this._font.units * this.size;
+            return this.size * (2.5 / this._font.units + 1 / 900 + this.tracking / 990);
         };
         Character.prototype.draw = function (ctx) {
             this._glyph._fill.style = this.fillColor;
@@ -1178,20 +1175,28 @@ var txt;
             this.align = txt.Align.TOP_LEFT;
             this.characterCase = txt.Case.NORMAL;
             this.size = 12;
-            this.minSize = 6;
+            this.minSize = null;
+            this.maxTracking = null;
             this.font = "belinda";
             this.tracking = 0;
             this.ligatures = false;
             this.fillColor = "#000";
             this.strokeColor = null;
             this.strokeWidth = null;
-            this.autoSize = false;
+            this.singleLine = false;
+            this.autoExpand = false;
+            this.autoReduce = false;
+            this.overset = false;
+            this.oversetIndex = null;
             this.loaderId = null;
             this.style = null;
             this.debug = false;
+            this.original = null;
             this.lines = [];
             if (props) {
+                this.original = props;
                 this.set(props);
+                this.original.tracking = this.tracking;
             }
             if (this.style == null) {
                 txt.FontLoader.load(this, [this.font]);
@@ -1218,7 +1223,18 @@ var txt;
             this.getStage().update();
         };
         CharacterText.prototype.layout = function () {
+            this.overset = false;
+            if (this.original.size) {
+                this.size = this.original.size;
+            }
+            if (this.original.tracking) {
+                this.tracking = this.original.tracking;
+            }
             this.text = this.text.replace(/([\n][ \t]+)/g, '\n');
+            if (this.singleLine === true) {
+                this.text = this.text.split('\n').join('');
+                this.text = this.text.split('\r').join('');
+            }
             this.lines = [];
             this.removeAllChildren();
             if (this.text === "" || this.text === undefined) {
@@ -1260,8 +1276,8 @@ var txt;
                 s.y = -font.descent / font.units * this.size;
                 this.block.addChild(s);
             }
-            if (this.autoSize == true) {
-                this.autoSizeMeasure();
+            if (this.singleLine === true && (this.autoExpand === true || this.autoReduce === true)) {
+                this.autoMeasure();
             }
             if (this.characterLayout() === false) {
                 this.removeAllChildren();
@@ -1271,38 +1287,115 @@ var txt;
             this.render();
             this.complete();
         };
-        CharacterText.prototype.autoSizeMeasure = function (count) {
-            if (count === void 0) { count = 0; }
-            var size = this.size;
+        CharacterText.prototype.autoMeasure = function () {
+            var size = this.original.size;
             var len = this.text.length;
             var width = this.width;
-            var font = txt.FontLoader.fonts[this.font];
-            var tracking = 0;
-            if (this.tracking > 0) {
-                tracking = this.tracking / font.units * len;
+            var defaultStyle = {
+                size: this.original.size,
+                font: this.original.font,
+                tracking: this.original.tracking,
+                characterCase: this.original.characterCase
+            };
+            var currentStyle;
+            var charCode = null;
+            var font;
+            var charMetrics = [];
+            var largestFontSize = defaultStyle.size;
+            for (var i = 0; i < len; i++) {
+                charCode = this.text.charCodeAt(i);
+                currentStyle = defaultStyle;
+                if (this.original.style !== undefined && this.original.style[i] !== undefined) {
+                    currentStyle = this.original.style[i];
+                    if (currentStyle.size === undefined)
+                        currentStyle.size = defaultStyle.size;
+                    if (currentStyle.font === undefined)
+                        currentStyle.font = defaultStyle.font;
+                    if (currentStyle.tracking === undefined)
+                        currentStyle.tracking = defaultStyle.tracking;
+                }
+                if (currentStyle.size > largestFontSize) {
+                    largestFontSize = currentStyle.size;
+                }
+                font = txt.FontLoader.fonts[currentStyle.font];
+                charMetrics.push({
+                    char: this.text[i],
+                    size: currentStyle.size,
+                    charCode: charCode,
+                    font: currentStyle.font,
+                    offset: font.glyphs[charCode].offset,
+                    units: font.units,
+                    tracking: this.trackingOffset(currentStyle.tracking, currentStyle.size, font.units),
+                    kerning: font.glyphs[charCode].getKerning(this.getCharCodeAt(i + 1), 1)
+                });
             }
-            if (width < len * size * font.default / font.units + tracking) {
-                if (count == 0) {
-                    this.size = Math.ceil(((width - tracking) / len * font.units / font.default) * 1.2);
-                    this.tracking = Math.floor(this.tracking * this.size / size);
-                }
-                else {
-                    this.size--;
-                    this.tracking = Math.floor(this.tracking * this.size / size);
-                }
-                if (this.size < this.minSize) {
-                    this.size = this.minSize;
-                    return;
-                }
-                this.autoSizeMeasure(count + 1);
-                if (count == 0) {
-                    this.size--;
-                    this.tracking = Math.floor(this.tracking * this.size / size);
-                    if (this.size < this.minSize) {
+            var space = {
+                char: " ",
+                size: currentStyle.size,
+                charCode: 32,
+                font: currentStyle.font,
+                offset: font.glyphs[32].offset,
+                units: font.units,
+                tracking: 0,
+                kerning: 0
+            };
+            charMetrics[charMetrics.length - 1].tracking = 0;
+            len = charMetrics.length;
+            var metricBaseWidth = 0;
+            var metricRealWidth = 0;
+            var metricRealWidthTracking = 0;
+            var current = null;
+            for (var i = 0; i < len; i++) {
+                current = charMetrics[i];
+                metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
+                metricRealWidth = metricRealWidth + ((current.offset + current.kerning) * current.size);
+                metricRealWidthTracking = metricRealWidthTracking + ((current.offset + current.kerning + current.tracking) * current.size);
+            }
+            if (metricRealWidth > this.width) {
+                if (this.autoReduce === true) {
+                    this.tracking = 0;
+                    this.size = this.original.size * this.width / (metricRealWidth + (space.offset * space.size));
+                    if (this.minSize != null && this.size < this.minSize) {
                         this.size = this.minSize;
                     }
+                    console.log("REDUCE SIZE");
+                    return;
                 }
             }
+            else {
+                var trackMetric = this.offsetTracking((this.width - metricRealWidth) / (len), current.size, current.units);
+                if (trackMetric < 0) {
+                    trackMetric = 0;
+                }
+                if (trackMetric > this.original.tracking && this.autoExpand) {
+                    if (this.maxTracking != null && trackMetric > this.maxTracking) {
+                        this.tracking = this.maxTracking;
+                    }
+                    else {
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    console.log("EXPAND TRACKING");
+                    return;
+                }
+                if (trackMetric < this.original.tracking && this.autoReduce) {
+                    if (this.maxTracking != null && trackMetric > this.maxTracking) {
+                        this.tracking = this.maxTracking;
+                    }
+                    else {
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    console.log("REDUCE TRACKING");
+                    return;
+                }
+            }
+        };
+        CharacterText.prototype.trackingOffset = function (tracking, size, units) {
+            return size * (2.5 / units + 1 / 900 + tracking / 990);
+        };
+        CharacterText.prototype.offsetTracking = function (offset, size, units) {
+            return Math.floor((offset - 2.5 / units - 1 / 900) * 990 / size);
         };
         CharacterText.prototype.characterLayout = function () {
             var len = this.text.length;
@@ -1420,7 +1513,7 @@ var txt;
                         }
                     }
                 }
-                if (hPosition + char.measuredWidth > this.width) {
+                if (this.singleLine === false && hPosition + char.measuredWidth > this.width) {
                     var lastchar = currentLine.children[currentLine.children.length - 1];
                     if (lastchar.characterCode == 32) {
                         currentLine.measuredWidth = hPosition - lastchar.measuredWidth - lastchar.trackingOffset() - lastchar._glyph.getKerning(this.getCharCodeAt(i), lastchar.size);
@@ -1450,6 +1543,15 @@ var txt;
                     this.lines.push(currentLine);
                     this.block.addChild(currentLine);
                     vPosition = 0;
+                }
+                else if (this.singleLine === true && hPosition + char.measuredWidth > this.width) {
+                    if (this.overset == false) {
+                        char.x = hPosition;
+                        currentLine.addChild(char);
+                        this.oversetIndex = i;
+                        this.overset = true;
+                    }
+                    break;
                 }
                 else {
                     char.x = hPosition;

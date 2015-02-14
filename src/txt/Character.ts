@@ -60,7 +60,7 @@ module txt {
             
             //missing glyph
             if( this._glyph === undefined ){
-                //    console.log( "MISSING GLYPH:" + this.character );
+                console.log( "MISSING GLYPH:" + this.character );
                 this._glyph = this._font.glyphs[ 42 ];
             }
             this.graphics = this._glyph.graphic();
@@ -93,11 +93,7 @@ module txt {
         }
 
         trackingOffset():number {
-            var unitSpacingFactor = 0;
-            if( this._font.units > 1000 ){
-                unitSpacingFactor = ( this._font.units - 1000 ) / 250;
-            }
-            return this._font.units / 1000 * ( this.tracking + unitSpacingFactor ) / this._font.units * this.size;
+            return this.size * ( 2.5 / this._font.units + 1 / 900 + this.tracking / 990 );
         }
 
         draw( ctx:CanvasRenderingContext2D ):boolean {

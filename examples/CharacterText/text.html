@@ -3,7 +3,7 @@
 <head>
     <title>txt: Text Example</title>
 
-    <script type="text/javascript" src="../../dist/easeljs-0.8.0.min.js"></script>
+    <script src="http://code.createjs.com/easeljs-0.8.0.min.js"></script>
     <script type="text/javascript" src="../../dist/txt.js"></script>
 
     <script type="text/javascript">
@@ -49,7 +49,24 @@
             height:360,
             size:120,
             x:10,
-            y:10
+            y:10,
+            debug:true
+        } );
+        
+        stage.addChild( text );
+
+        text = new txt.CharacterText( { 
+            text:'The fox jumped over the log.',
+            font:'raleway',
+            singleLine:true,
+            tracking:-4,
+            lineHeight:120,
+            width:1600,
+            height:360,
+            size:120,
+            x:10,
+            y:500,
+            debug:true
         } );
         
         stage.addChild( text );

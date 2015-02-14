@@ -9,25 +9,33 @@ module txt {
         align:number = txt.Align.TOP_LEFT;
         characterCase:number = txt.Case.NORMAL;
         size:number = 12;
-        minSize:number = 6;
+        minSize:number = null;
+        maxTracking:number = null;
         font:string = "belinda";
         tracking:number = 0;
         ligatures:boolean = false;
         fillColor:string = "#000";
         strokeColor:string = null;
         strokeWidth:number = null;
-        autoSize:boolean = false;
+        singleLine:boolean = false;
+        autoExpand:boolean = false;
+        autoReduce:boolean = false;
+        overset:boolean = false;
+        oversetIndex:number = null;
         loaderId:number = null;
         style:Style[] = null;
         debug:boolean = false;
-
+        original:ConstructObj = null;
         lines:Line[] = [];
         block:createjs.Container;
 
         constructor( props:ConstructObj = null ){
             super();
+
             if( props ){
+                this.original = props;
                 this.set( props );
+                this.original.tracking = this.tracking;
             }
             if( this.style == null ){
                 txt.FontLoader.load( this , [ this.font ] );
@@ -63,7 +71,19 @@ module txt {
         //layout text
         layout(){
 
+            this.overset = false;
+            if( this.original.size ){
+                this.size = this.original.size;
+            }
+            if( this.original.tracking ){
+                this.tracking = this.original.tracking;
+            }
             this.text = this.text.replace( /([\n][ \t]+)/g , '\n' );
+
+            if( this.singleLine === true ){
+                this.text = this.text.split( '\n' ).join( '' );
+                this.text = this.text.split( '\r' ).join( '' );
+            }
             
             this.lines = [];
 
@@ -120,8 +140,8 @@ module txt {
                 this.block.addChild( s );
             
             }
-            if( this.autoSize == true ){
-                this.autoSizeMeasure();
+            if( this.singleLine === true && ( this.autoExpand === true || this.autoReduce === true ) ){
+                this.autoMeasure();
             }
             if( this.characterLayout() === false ){
                 this.removeAllChildren();
@@ -132,37 +152,153 @@ module txt {
             this.complete();
         }
 
-        autoSizeMeasure( count = 0 ){
-            var size = this.size;
+        autoMeasure(){
+
+            //Extract orgin sizing from this.original to preserve
+            //metrics. autoMeasure will change style properties
+            //directly. Change this.original to rerender.
+
+            var size = this.original.size;
             var len = this.text.length;
             var width = this.width;
-            var font = txt.FontLoader.fonts[ this.font ];
-            var tracking = 0
-            if( this.tracking > 0 ){
-                tracking = this.tracking / font.units * len;
+            var defaultStyle = {
+                size: this.original.size,
+                font: this.original.font,
+                tracking: this.original.tracking,
+                characterCase: this.original.characterCase
+            };
+            var currentStyle:any;
+            var charCode:number = null;
+            var font:txt.Font;
+            var charMetrics = [];
+            var largestFontSize = defaultStyle.size;
+            //console.log( "LOOPCHAR===============" );
+            //console.log( " len: " + len );
+            for( var i = 0; i < len; i++ ){
+
+                charCode = this.text.charCodeAt(i);
+
+                currentStyle = defaultStyle;
+                if( this.original.style !== undefined && this.original.style[ i ] !== undefined ){
+                    currentStyle = this.original.style[ i ];
+                    // make sure style contains properties needed.
+                    if( currentStyle.size === undefined ) currentStyle.size = defaultStyle.size;
+                    if( currentStyle.font === undefined ) currentStyle.font = defaultStyle.font;
+                    if( currentStyle.tracking === undefined ) currentStyle.tracking = defaultStyle.tracking;
+                }
+                if( currentStyle.size > largestFontSize ){
+                    largestFontSize = currentStyle.size;
+                }
+                font = txt.FontLoader.fonts[ currentStyle.font ];
+
+                //console.log( currentStyle.tracking , font.units );
+                
+                charMetrics.push( {
+                    char: this.text[i],
+                    size: currentStyle.size,
+                    charCode:charCode,
+                    font: currentStyle.font,
+                    offset: font.glyphs[charCode].offset,
+                    units: font.units,
+                    tracking: this.trackingOffset( currentStyle.tracking , currentStyle.size , font.units ),
+                    kerning: font.glyphs[charCode].getKerning( this.getCharCodeAt( i + 1 ) , 1 )
+                });
+                //console.log( this.text[i] );
             }
-            if( width < len * size * font.default / font.units + tracking ){
-                if( count == 0 ){
-                    this.size = Math.ceil( ( ( width - tracking ) / len * font.units / font.default ) * 1.2 );
-                    this.tracking = Math.floor( this.tracking * this.size / size );
-                    
-                }else{
-                    this.size--;
-                    this.tracking = Math.floor( this.tracking * this.size / size );
-                }
-                if( this.size < this.minSize ){
-                    this.size = this.minSize;
-                    return;
-                }
-                this.autoSizeMeasure( count + 1 );
-                if( count == 0 ){
-                    this.size--;
-                    this.tracking = Math.floor( this.tracking * this.size / size );
-                    if( this.size < this.minSize ){
+
+            //save space char using last known width/height
+            var space:any = {
+                char: " ",
+                size: currentStyle.size,
+                charCode: 32,
+                font: currentStyle.font,
+                offset: font.glyphs[32].offset,
+                units: font.units,
+                tracking: 0,
+                kerning: 0
+            };
+
+            charMetrics[ charMetrics.length-1 ].tracking=0;
+            //charMetrics[ charMetrics.length-1 ].kerning=0;
+            
+            len = charMetrics.length;
+
+            //measured without size
+            var metricBaseWidth = 0;
+            //measured at size
+            var metricRealWidth = 0;
+            //measured at size with tracking
+            var metricRealWidthTracking = 0;
+
+            var current = null;
+            //console.log( " len: " + len );
+            //console.log( "LOOPMETRICS===============" );
+            for( var i = 0; i < len; i++ ){
+                current = charMetrics[i];
+                metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
+                metricRealWidth = metricRealWidth + ( ( current.offset + current.kerning ) * current.size );
+                metricRealWidthTracking = metricRealWidthTracking + 
+                    ( ( current.offset + current.kerning + current.tracking ) * current.size );
+                //console.log( current.char );
+            }
+            //console.log( "METRICS===============" );
+            //console.log( "mbw:  " + metricBaseWidth );
+            //console.log( "mrw:  " + metricRealWidth );
+            //console.log( "mrwt: " + metricRealWidthTracking );
+            //console.log( "widt: " + this.width );
+            //console.log( " len: " + len );
+            //console.log( charMetrics );
+            //console.log( "======================" );
+            
+            //size cases
+            if( metricRealWidth > this.width ){
+                if( this.autoReduce === true ){
+                    this.tracking = 0;
+                    this.size = this.original.size * this.width / ( metricRealWidth + ( space.offset * space.size ) );
+                    if( this.minSize != null && this.size < this.minSize ){
                         this.size = this.minSize;
                     }
+                    console.log( "REDUCE SIZE")
+                    return;
+                }
+            //tracking cases
+            }else{
+                var trackMetric = this.offsetTracking( ( this.width - metricRealWidth )/( len ) , current.size , current.units );
+                if( trackMetric < 0 ){
+                    trackMetric = 0;
+                }
+                //autoexpand case
+                if( trackMetric > this.original.tracking && this.autoExpand ){
+                    if( this.maxTracking != null && trackMetric > this.maxTracking ){
+                        this.tracking = this.maxTracking;
+                    }else{
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    console.log( "EXPAND TRACKING")
+                    return;
+                }
+                //autoreduce tracking case
+                if( trackMetric < this.original.tracking && this.autoReduce ){
+                    if( this.maxTracking != null && trackMetric > this.maxTracking ){
+                        this.tracking = this.maxTracking;
+                    }else{
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    console.log( "REDUCE TRACKING")
+                    return;
                 }
             }
+
+            
+        }
+        trackingOffset( tracking:number , size:number , units:number ):number {
+            return size * ( 2.5 / units + 1 / 900 + tracking / 990 );
+        }
+
+        offsetTracking( offset:number , size:number , units:number ):number {
+            return Math.floor( ( offset - 2.5 / units - 1 / 900 ) * 990 / size );
         }
 
         //place characters in lines
@@ -308,8 +444,7 @@ module txt {
                     }
                 }
 
-                if( hPosition + char.measuredWidth > this.width ){
-                    
+                if( this.singleLine === false && hPosition + char.measuredWidth > this.width  ){
                     var lastchar:Character = <txt.Character>currentLine.children[ currentLine.children.length - 1 ];
                     if( lastchar.characterCode == 32 ){
                         currentLine.measuredWidth = hPosition - lastchar.measuredWidth - lastchar.trackingOffset() - lastchar._glyph.getKerning( this.getCharCodeAt( i ) , lastchar.size );
@@ -338,7 +473,15 @@ module txt {
                     this.lines.push( currentLine );
                     this.block.addChild( currentLine );
                     vPosition = 0;
-                
+                }else if( this.singleLine === true && hPosition + char.measuredWidth > this.width  ){
+                    if( this.overset == false ){
+                        char.x = hPosition;
+                        currentLine.addChild( char );
+                        this.oversetIndex = i;
+                        this.overset = true;
+                    }
+                    break;
+                    
                 }else{
                     char.x = hPosition;
                     // push character into word
