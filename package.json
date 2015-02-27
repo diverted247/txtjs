@@ -1,6 +1,6 @@
 {
   "name": "txtjs",
-  "version": "0.8.9",
+  "version": "0.9.0",
   "description": "A <canvas> font and typesetting engine for @CreateJS",
   "author": "Ted Patrick (http://tedpatrick.com)",
   "license": "BSD",
