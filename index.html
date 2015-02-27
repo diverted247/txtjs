@@ -23,10 +23,12 @@
 
             <ul>
                 <li><a href="https://github.com/diverted247/txtjs">Source</a></li>
+                <li><a href="\docs\">API Docs</a></li>
                 <li><a href="#text">Text</a></li>
                 <li><a href="#charactertext">CharacterText</a></li>
                 <li><a href="#pathtext">PathText</a></li>
                 <li><a href="#graphics">Graphics</a></li>
+                <li><a href="#accessibility">Accessibility</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#warning">Warning</a></li>
                 <li><a href="#license">License (BSD)</a></li>
@@ -55,6 +57,9 @@
                 	<li>
 						<a href="/examples/Text/text.html">Basics</a>
 					</li>
+                    <li>
+                        <a href="/examples/Text/accessibility.html">Accessibility</a>
+                    </li>
 	                <li>
 						<a href="/examples/Text/moon.html">Performance - To the Moon</a>
 					</li>
@@ -79,6 +84,9 @@
 					<li>
 						<a href="/examples/Text/tracking.html">Style - Tracking</a>
 					</li>
+                    <li>
+                        <a href="/examples/Text/tracking_layout_test.html">Style - Tracking Layout Test</a>
+                    </li>
 					<li>
 						<a href="/examples/Text/stroke.html">Style - Stoke and Outline</a>
 					</li>
@@ -139,6 +147,9 @@
                 	<li>
 						<a href="/examples/CharacterText/text.html">Basics</a>
 					</li>
+                    <li>
+                        <a href="/examples/CharacterText/accessibility.html">Accessibility</a>
+                    </li>
 	                <li>
 						<a href="/examples/CharacterText/moon.html">Performance - To the Moon</a>
 					</li>
@@ -163,6 +174,9 @@
 					<li>
 						<a href="/examples/CharacterText/tracking.html">Style - Tracking</a>
 					</li>
+                    <li>
+                        <a href="/examples/CharacterText/tracking_layout_test.html">Style - Tracking Layout Test</a>
+                    </li>
 					<li>
 						<a href="/examples/CharacterText/stroke.html">Style - Stoke and Outline</a>
 					</li>
@@ -228,11 +242,23 @@
 
             <h2 class="content-subhead" id="pathtext">PathText</h2>
             <p>
-            PathText is experimental and currently dependent on generating a Point[] from an SVGPath element in batch (read slow loading). Development will focus on PathText in the next phase of development.
+            PathText represents a textfield that writes Characters to an SVGPath.
                 <ul>
                 	<li>
 						<a href="/examples/PathText/text.html">Basics</a>
 					</li>
+                    <li>
+                        <a href="/examples/PathText/layout.html">Layout</a>
+                    </li>
+                    <li>
+                        <a href="/examples/PathText/accessibility.html">Accessibility</a>
+                    </li>
+                    <li>
+                        <a href="/examples/PathText/alignment.html">Alignment</a>
+                    </li>
+                    <li>
+                        <a href="/examples/PathText/flipped.html">Flipped</a>
+                    </li>
 				</ul>
                 
             </p>
@@ -252,6 +278,11 @@
                     </li>
                 </ul>
                 
+            </p>
+
+            <h2 class="content-subhead" id="accessibility">Accessibility</h2>
+            <p>
+            By default the txt.Accessibility API is on. The API adds DOM text elements as canvas children that matching the .text property used. The API allows you to further enhance the text written within the canvas element by controlling content in '.accessibilityText' and element order in '.accessibilityPriority'.
             </p>
 
 
@@ -286,8 +317,7 @@
             </p>
 
             <h2 class="content-subhead" id="license">License (BSD)</h2>
-            <p>
-                Copyright (c) 2014, Ted Patrick LLC
+            <p>Copyright (c) 2015, <a href="http://light.ly">Lightly LLC</a>
 All rights reserved.</p>
 
 <p>Redistribution and use in source and binary forms, with or without
@@ -356,7 +386,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         stage = new createjs.Stage(canvas);
         
         var text = new txt.Text( { 
-            text:'Written to <canvas> with txtjs. Welcome.\nv0.8.8',
+            text:'Written to <canvas> with txtjs. Welcome.\nv0.9.0',
             font:'raleway',
             align:txt.Align.MIDDLE_CENTER,
             tracking:-5,
@@ -365,7 +395,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             height:400,
             size:100,
             x:0,
-            y:0
+            y:0,
+            accessibilityText:'Written to canvas with txtjs. Welcome. v0.9.0'
         } );
         
         stage.addChild( text );

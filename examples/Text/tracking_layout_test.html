@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>txt: Tracking Example</title>
+
+    <script src="http://code.createjs.com/easeljs-0.8.0.min.js"></script>
+    <script type="text/javascript" src="../../dist/txt.js"></script>
+
+    <script type="text/javascript">
+    var canvas;
+    var stage;
+
+    var PIXEL_RATIO = (function () {
+    var ctx = document.createElement("canvas").getContext("2d"),
+        dpr = window.devicePixelRatio || 1,
+        bsr = ctx.webkitBackingStorePixelRatio ||
+              ctx.mozBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio ||
+              ctx.oBackingStorePixelRatio ||
+              ctx.backingStorePixelRatio || 1;
+        return dpr / bsr;
+    })();
+
+    createHiDPICanvas = function(w, h, ratio) {
+        if (!ratio) { ratio = PIXEL_RATIO; }
+        var can = document.createElement("canvas");
+        can.width = w * ratio;
+        can.height = h * ratio;
+        can.style.width = w + "px";
+        can.style.height = h + "px";
+        can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+        return can;
+    }
+    
+
+    function init() {
+        
+        canvas = createHiDPICanvas( 2000 , 2000 , 2 );
+        document.body.appendChild( canvas );
+        stage = new createjs.Stage(canvas);
+        stage.scaleX = stage.scaleY = 1;
+
+        var i = new createjs.Bitmap('/examples/tracking_test.png' );
+        i.x=25;
+        i.y=14;
+        i.scaleX = i.scaleY = 1;
+        stage.addChild( i );
+        
+        stage.addChild( new txt.Text( { 
+            text:'0 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:0,
+            size:62,
+            x:100,
+            y:100
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'100 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:100,
+            size:62,
+            x:100,
+            y:170
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'200 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:200,
+            size:62,
+            x:100,
+            y:239
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'300 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:300,
+            size:62,
+            x:100,
+            y:309
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'400 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:400,
+            size:62,
+            x:100,
+            y:378
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'500 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:500,
+            size:62,
+            x:100,
+            y:448
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'0 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:0,
+            size:62,
+            x:100,
+            y:517
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'100 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:100,
+            size:62,
+            x:100,
+            y:586
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'200 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:200,
+            size:62,
+            x:100,
+            y:656
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'300 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:300,
+            size:62,
+            x:100,
+            y:725
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'400 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:400,
+            size:62,
+            x:100,
+            y:794
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'500 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:500,
+            size:62,
+            x:100,
+            y:864
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'0 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:0,
+            size:62,
+            x:100,
+            y:919
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'100 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:100,
+            size:62,
+            x:100,
+            y:988
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'200 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:200,
+            size:62,
+            x:100,
+            y:1058
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'300 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:300,
+            size:62,
+            x:100,
+            y:1127
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'400 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:400,
+            size:62,
+            x:100,
+            y:1197
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'500 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:500,
+            size:62,
+            x:100,
+            y:1266
+        } ) );
+
+
+
+
+
+
+        stage.addChild( new txt.Text( { 
+            text:'0 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:0,
+            size:29,
+            x:1454,
+            y:95
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'100 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:100,
+            size:29,
+            x:1454,
+            y:164
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'200 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:200,
+            size:29,
+            x:1454,
+            y:233
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'300 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:300,
+            size:29,
+            x:1454,
+            y:303
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'400 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:400,
+            size:29,
+            x:1454,
+            y:372
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'500 abcdefghijklmnop',
+            font:'abel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:500,
+            size:29,
+            x:1454,
+            y:442
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'0 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:0,
+            size:29,
+            x:1454,
+            y:511
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'100 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:100,
+            size:29,
+            x:1454,
+            y:580
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'200 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:200,
+            size:29,
+            x:1454,
+            y:650
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'300 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:300,
+            size:29,
+            x:1454,
+            y:719
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'400 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:400,
+            size:29,
+            x:1454,
+            y:789
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'500 abcdefghijklmnop',
+            font:'cinzel',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:500,
+            size:29,
+            x:1454,
+            y:858
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'0 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:0,
+            size:29,
+            x:1454,
+            y:920
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'100 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:100,
+            size:29,
+            x:1454,
+            y:989
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'200 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:200,
+            size:29,
+            x:1454,
+            y:1060
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'300 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:300,
+            size:29,
+            x:1454,
+            y:1129
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'400 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:400,
+            size:29,
+            x:1454,
+            y:1198
+        } ) );
+
+        stage.addChild( new txt.Text( { 
+            text:'500 abcdefghijklmnop',
+            font:'craftygirls',
+            width:1900,
+            height:300,
+            fillColor:'red',
+            tracking:500,
+            size:29,
+            x:1454,
+            y:1268
+        } ) );
+
+        stage.update();
+
+    }
+
+    </script>
+
+</head>
+<body onload="init()">
+</body>
+</html>

@@ -28,6 +28,12 @@ module txt {
         original:ConstructObj = null;
         lines:Line[] = [];
         block:createjs.Container;
+        missingGlyphs:any[] = null;
+
+        //accessibility
+        accessibilityText:string = null;
+        accessibilityPriority:number = 2;
+        accessibilityId:number = null;
 
         constructor( props:ConstructObj = null ){
             super();
@@ -70,6 +76,9 @@ module txt {
         
         //layout text
         layout(){
+            
+            //accessibility api
+            txt.Accessibility.set( this );
 
             this.overset = false;
             if( this.original.size ){
@@ -86,7 +95,7 @@ module txt {
             }
             
             this.lines = [];
-
+            this.missingGlyphs = null;
             this.removeAllChildren();
 
             if( this.text === "" || this.text === undefined ){
@@ -141,7 +150,7 @@ module txt {
             
             }
             if( this.singleLine === true && ( this.autoExpand === true || this.autoReduce === true ) ){
-                this.autoMeasure();
+                this.measure();
             }
             if( this.characterLayout() === false ){
                 this.removeAllChildren();
@@ -152,7 +161,7 @@ module txt {
             this.complete();
         }
 
-        autoMeasure(){
+        measure():boolean{
 
             //Extract orgin sizing from this.original to preserve
             //metrics. autoMeasure will change style properties
@@ -160,7 +169,7 @@ module txt {
 
             var size = this.original.size;
             var len = this.text.length;
-            var width = this.width;
+            var width = this.getWidth();
             var defaultStyle = {
                 size: this.original.size,
                 font: this.original.font,
@@ -259,7 +268,7 @@ module txt {
                         this.size = this.minSize;
                     }
                     //console.log( "REDUCE SIZE")
-                    return;
+                    return true;
                 }
             //tracking cases
             }else{
@@ -276,7 +285,7 @@ module txt {
                     }
                     this.size = this.original.size;
                     //console.log( "EXPAND TRACKING")
-                    return;
+                    return true;
                 }
                 //autoreduce tracking case
                 if( trackMetric < this.original.tracking && this.autoReduce ){
@@ -287,18 +296,22 @@ module txt {
                     }
                     this.size = this.original.size;
                     //console.log( "REDUCE TRACKING")
-                    return;
+                    return true;
                 }
             }
-
-            
+            return true;
         }
+
         trackingOffset( tracking:number , size:number , units:number ):number {
             return size * ( 2.5 / units + 1 / 900 + tracking / 990 );
         }
 
         offsetTracking( offset:number , size:number , units:number ):number {
             return Math.floor( ( offset - 2.5 / units - 1 / 900 ) * 990 / size );
+        }
+
+        getWidth():number {
+            return this.width;
         }
 
         //place characters in lines
@@ -400,6 +413,12 @@ module txt {
 
                 // create character
                 char = new Character( this.text.charAt( i ) , currentStyle , i );
+                if( char.missing ){
+                    if( this.missingGlyphs == null ){
+                        this.missingGlyphs = [];
+                    }
+                    this.missingGlyphs.push( { position:i, character:this.text.charAt( i ), font:currentStyle.font } );
+                }
 
                 if( firstLine === true ){
                     

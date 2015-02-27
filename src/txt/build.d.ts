@@ -5,6 +5,7 @@
 
 /// <reference path='Interfaces.ts' />
 
+/// <reference path='Accessibility.ts' />
 /// <reference path='Text.ts' />
 /// <reference path='Character.ts' />
 /// <reference path='Font.ts' />
@@ -15,5 +16,6 @@
 /// <reference path='Align.ts' />
 /// <reference path='CharacterText.ts' />
 /// <reference path='PathText.ts' />
+/// <reference path='Path.ts' />
 /// <reference path='Word.ts' />
 /// <reference path='Line.ts' />

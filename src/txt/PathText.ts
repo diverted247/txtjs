@@ -8,30 +8,43 @@ module txt {
         font:string = "belinda";
         tracking:number = 0;
         ligatures:boolean = false;
+        minSize:number = null;
+        maxTracking:number = null;
         fillColor:string = "#000";
         strokeColor:string = null;
         strokeWidth:number = null;
         style:Style[] = null;
         debug:boolean = false;
-        points:any[];
         characters:txt.Character[];
+        block:createjs.Container;
+        original:ConstructObj = null;
+        autoExpand:boolean = false;
+        autoReduce:boolean = false;
+        overset:boolean = false;
+        oversetIndex:number = null;
+        pathPoints:txt.Path = null;
         path:string = "";
         start:number = 0;
-        center:number = null;
         end:number = null;
         flipped:boolean = false;
+        fit:PathFit = txt.PathFit.Rainbow;
+        align:PathAlign = txt.PathAlign.Center;
+        missingGlyphs:any[] = null;
 
-        static DISTANCE:number = 0.1;
-            
-
-        block:createjs.Container;
+        //accessibility
+        accessibilityText:string = null;
+        accessibilityPriority:number = 2;
+        accessibilityId:number = null;
+        
 
         constructor( props:ConstructObj = null ){
             super();
+
             if( props ){
+                this.original = props;
                 this.set( props );
+                this.original.tracking = this.tracking;
             }
-            
             if( this.style == null ){
                 txt.FontLoader.load( this , [ this.font ] );
             }else{
@@ -46,7 +59,44 @@ module txt {
                 }
                 txt.FontLoader.load( this , fonts );
             }
-            this.points = this.pathToPoints();
+            this.pathPoints = new txt.Path( this.path , this.start , this.end , this.flipped , this.fit , this.align );
+            //console.log( this );
+        }
+
+        setPath( path:string ){
+            this.path = path;
+            this.pathPoints.path = this.path;
+            this.pathPoints.update();
+        }
+
+        setStart( start:number ){
+            this.start = start;
+            this.pathPoints.start = this.start;
+            this.pathPoints.update();
+        }
+
+        setEnd( end:number ){
+            this.end = end;
+            this.pathPoints.end = this.end;
+            this.pathPoints.update();
+        }
+
+        setFlipped( flipped:boolean ){
+            this.flipped = flipped;
+            this.pathPoints.flipped = this.flipped;
+            this.pathPoints.update();
+        }   
+
+        setFit( fit:txt.PathFit = txt.PathFit.Rainbow ){
+            this.fit = fit;
+            this.pathPoints.fit = this.fit;
+            this.pathPoints.update();
+        }
+
+        setAlign( align:PathAlign = txt.PathAlign.Center ){
+            this.align = align;
+            this.pathPoints.align = this.align;
+            this.pathPoints.update();
         }
 
         fontLoaded(){
@@ -57,15 +107,58 @@ module txt {
             this.getStage().update();
         }
 
+        getWidth():number {
+            return this.pathPoints.realLength;
+        }
+
         layout(){
+
+            //accessibility api
+            txt.Accessibility.set( this );
+            
             this.removeAllChildren();
             this.characters = [];
-
+            this.missingGlyphs = null;
             if( this.debug == true ){
+
                 var s = new createjs.Shape();
                 s.graphics.beginStroke( "#FF0000" );
                 s.graphics.setStrokeStyle( 0.1 );
                 s.graphics.decodeSVGPath( this.path );
+                s.graphics.endFill();
+                s.graphics.endStroke();
+                this.addChild( s );
+
+                s = new createjs.Shape();
+                var pp = this.pathPoints.getRealPathPoint( 0 );
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill( "black" );
+                s.graphics.drawCircle( 0 , 0 , 2 );
+                this.addChild( s );
+
+                s = new createjs.Shape();
+                var pp = this.pathPoints.getRealPathPoint( this.pathPoints.start );
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill( "green" );
+                s.graphics.drawCircle( 0 , 0 , 2 );
+                this.addChild( s );
+                
+                s = new createjs.Shape();
+                pp = this.pathPoints.getRealPathPoint( this.pathPoints.end );
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill( "red" );
+                s.graphics.drawCircle( 0 , 0 , 2 );
+                this.addChild( s );
+                
+                s = new createjs.Shape();
+                pp = this.pathPoints.getRealPathPoint( this.pathPoints.center );
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill( "blue" );
+                s.graphics.drawCircle( 0 , 0 , 2 );
                 this.addChild( s );
             }
 
@@ -76,11 +169,160 @@ module txt {
 
             this.block = new createjs.Container()
             this.addChild( this.block );
+
+            if( this.autoExpand === true || this.autoReduce === true ){
+                if( this.measure() === false ){
+                    this.removeAllChildren();
+                    return;
+                }
+            }
+            
             if( this.characterLayout() === false ){
                 this.removeAllChildren();
                 return;
             }
             this.render();
+        }
+
+        measure():boolean{
+
+            //Extract orgin sizing from this.original to preserve
+            //metrics. autoMeasure will change style properties
+            //directly. Change this.original to rerender.
+
+            var size = this.original.size;
+            var len = this.text.length;
+            var width = this.getWidth();
+            var defaultStyle = {
+                size: this.original.size,
+                font: this.original.font,
+                tracking: this.original.tracking,
+                characterCase: this.original.characterCase
+            };
+            var currentStyle:any;
+            var charCode:number = null;
+            var font:txt.Font;
+            var charMetrics = [];
+            var largestFontSize = defaultStyle.size;
+            //console.log( "LOOPCHAR===============" );
+            //console.log( " len: " + len );
+            for( var i = 0; i < len; i++ ){
+
+                charCode = this.text.charCodeAt(i);
+
+                currentStyle = defaultStyle;
+                if( this.original.style !== undefined && this.original.style[ i ] !== undefined ){
+                    currentStyle = this.original.style[ i ];
+                    // make sure style contains properties needed.
+                    if( currentStyle.size === undefined ) currentStyle.size = defaultStyle.size;
+                    if( currentStyle.font === undefined ) currentStyle.font = defaultStyle.font;
+                    if( currentStyle.tracking === undefined ) currentStyle.tracking = defaultStyle.tracking;
+                }
+                if( currentStyle.size > largestFontSize ){
+                    largestFontSize = currentStyle.size;
+                }
+                font = txt.FontLoader.fonts[ currentStyle.font ];
+
+                //console.log( currentStyle.tracking , font.units );
+                
+                charMetrics.push( {
+                    char: this.text[i],
+                    size: currentStyle.size,
+                    charCode:charCode,
+                    font: currentStyle.font,
+                    offset: font.glyphs[charCode].offset,
+                    units: font.units,
+                    tracking: this.trackingOffset( currentStyle.tracking , currentStyle.size , font.units ),
+                    kerning: font.glyphs[charCode].getKerning( this.getCharCodeAt( i + 1 ) , 1 )
+                });
+                //console.log( this.text[i] );
+            }
+
+            //save space char using last known width/height
+            var space:any = {
+                char: " ",
+                size: currentStyle.size,
+                charCode: 32,
+                font: currentStyle.font,
+                offset: font.glyphs[32].offset,
+                units: font.units,
+                tracking: 0,
+                kerning: 0
+            };
+
+            charMetrics[ charMetrics.length-1 ].tracking=0;
+            //charMetrics[ charMetrics.length-1 ].kerning=0;
+            
+            len = charMetrics.length;
+
+            //measured without size
+            var metricBaseWidth = 0;
+            //measured at size
+            var metricRealWidth = 0;
+            //measured at size with tracking
+            var metricRealWidthTracking = 0;
+
+            var current = null;
+            //console.log( " len: " + len );
+            //console.log( "LOOPMETRICS===============" );
+            for( var i = 0; i < len; i++ ){
+                current = charMetrics[i];
+                metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
+                metricRealWidth = metricRealWidth + ( ( current.offset + current.kerning ) * current.size );
+                metricRealWidthTracking = metricRealWidthTracking + 
+                    ( ( current.offset + current.kerning + current.tracking ) * current.size );
+                //console.log( current.char );
+            }
+            //console.log( "METRICS===============" );
+            //console.log( "mbw:  " + metricBaseWidth );
+            //console.log( "mrw:  " + metricRealWidth );
+            //console.log( "mrwt: " + metricRealWidthTracking );
+            //console.log( "widt: " + this.width );
+            //console.log( " len: " + len );
+            //console.log( charMetrics );
+            //console.log( "======================" );
+            
+            //size cases
+            if( metricRealWidth > width ){
+                if( this.autoReduce === true ){
+                    this.tracking = 0;
+                    this.size = this.original.size * width / ( metricRealWidth + ( space.offset * space.size ) );
+                    if( this.minSize != null && this.size < this.minSize ){
+                        this.size = this.minSize;
+                    }
+                    //console.log( "REDUCE SIZE")
+                    return true;
+                }
+            //tracking cases
+            }else{
+                var trackMetric = this.offsetTracking( ( width - metricRealWidth )/( len ) , current.size , current.units );
+                if( trackMetric < 0 ){
+                    trackMetric = 0;
+                }
+                //autoexpand case
+                if( trackMetric > this.original.tracking && this.autoExpand ){
+                    if( this.maxTracking != null && trackMetric > this.maxTracking ){
+                        this.tracking = this.maxTracking;
+                    }else{
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    //console.log( "EXPAND TRACKING")
+                    return true;
+                }
+                //autoreduce tracking case
+                if( trackMetric < this.original.tracking && this.autoReduce ){
+                    if( this.maxTracking != null && trackMetric > this.maxTracking ){
+                        this.tracking = this.maxTracking;
+                    }else{
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    //console.log( "REDUCE TRACKING")
+                    return true;
+                }
+            }
+            return true;
         }
 
         //place characters in words
@@ -101,14 +343,7 @@ module txt {
             var hPosition:number = 0;
             var charKern:number;
             var tracking:number;
-            var point:any[];
-            var p0Distance:number;
-            var p0:Point;
-            var p1:Point;
-            var p2:Point;
             var angle:number;
-            var pathDistance:number = txt.PathText.DISTANCE;
-            var pointLength:number = this.points.length;
 
             // loop over characters
             // place into lines
@@ -131,6 +366,7 @@ module txt {
                     continue;
                 }
 
+
                 //runtime test for font
                 if( txt.FontLoader.isLoaded( currentStyle.font ) === false ){
                     txt.FontLoader.load( this , [ currentStyle.font ] );
@@ -139,7 +375,13 @@ module txt {
 
                 // create character
                 char = new Character( this.text.charAt( i ) , currentStyle , i );
-
+                if( char.missing ){
+                    if( this.missingGlyphs == null ){
+                        this.missingGlyphs = [];
+                    }
+                    this.missingGlyphs.push( { position:i, character:this.text.charAt( i ), font:currentStyle.font } );
+                }
+                
                 //swap character if ligature
                 //ligatures removed if tracking or this.ligatures is false
                 if( currentStyle.tracking == 0 && this.ligatures == true ){
@@ -174,43 +416,61 @@ module txt {
                 // push character into block
                 this.characters.push( char );
                 this.block.addChild( char );
+
+                //char.x = hPosition;
                 hPosition = hPosition + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning( this.getCharCodeAt( i + 1 ) , char.size );
 
             }
 
-            var offsetStart = Math.round( ( pointLength * pathDistance - hPosition ) / 2 ) ;
             len = this.characters.length;
+            var pathPoint:any;
+            var nextRotation = false;
             for( i = 0; i < len; i++ ){
                 char = <txt.Character>this.characters[ i ];
-                p0Distance = Math.round( ( offsetStart + char.hPosition ) / pathDistance );
-                p0 = this.points[ p0Distance ];
-                if( p0 == undefined ){
-                    break;
-                }
-                char.x = p0.x;
-                char.y = p0.y;
-                p0 = this.points[ p0Distance + 15 ];
+                pathPoint = this.pathPoints.getPathPoint( char.hPosition , hPosition , char._glyph.offset * char.size );
+                char.x = pathPoint.x;
+                char.y = pathPoint.y;
 
-                if( i + 35 < pointLength ){
-                    p1 = this.points[ p0Distance + 35 ];
-                    angle = Math.atan( ( p0.y - p1.y ) / ( p0.x - p1.x ) ) * 180 / Math.PI;
-                    // left
-                    if( p0.x >= p1.x ){
-                        angle = angle + 180;
-                    }
+                //correct rotation around linesegments
+                if( nextRotation == true ){
+                    this.characters[ i-1 ].parent.rotation = pathPoint.rotation;
+                    nextRotation = false;
+                }
+                if( pathPoint.next == true ){
+                    nextRotation = true;
+                }
+                
+                char.rotation = pathPoint.rotation;
+
+                //reparent child into offset container
+                if( pathPoint.offsetX ){
+                    var offsetChild = new createjs.Container();
+                    offsetChild.x = pathPoint.x
+                    offsetChild.y = pathPoint.y
+                    offsetChild.rotation = pathPoint.rotation;
+                    char.parent.removeChild( char );
+                    offsetChild.addChild( char );
+                    char.x = pathPoint.offsetX;
+                    char.y = 0;
+                    char.rotation = 0;
+                    this.addChild( offsetChild );
                 }else{
-                    p1 = this.points[ p0Distance - 35 ];
-                    angle = Math.atan( ( p1.y - p0.y ) / ( p1.x - p0.x ) ) * 180 / Math.PI;
-                    // left
-                    if( p1.x >= p0.x ){
-                        angle = angle + 180;
-                    }
+                    char.x = pathPoint.x;
+                    char.y = pathPoint.y;
+                    char.rotation = pathPoint.rotation;
+                
                 }
-
-                char.rotation = angle;
             }
             return true;
 
+        }
+
+        trackingOffset( tracking:number , size:number , units:number ):number {
+            return size * ( 2.5 / units + 1 / 900 + tracking / 990 );
+        }
+
+        offsetTracking( offset:number , size:number , units:number ):number {
+            return Math.floor( ( offset - 2.5 / units - 1 / 900 ) * 990 / size );
         }
 
         getCharCodeAt( index:number ):number {
@@ -229,91 +489,6 @@ module txt {
             }else{
                 //fallback case for unknown.
                 return this.text.charAt( index ).charCodeAt( 0 );
-            }
-        }
-
-        
-
-        pathToPoints():any[]{
-            var path = <SVGPathElement>document.createElementNS( "http://www.w3.org/2000/svg" , "path" );
-            path.setAttributeNS( null , "d" , this.path );
-            var pathLength = path.getTotalLength();
-            var pathClosed = ( this.path.toLowerCase().indexOf( 'z' ) != -1 );
-            if( this.end == null ){
-                this.end = pathLength;
-            }
-            if( this.center == null ){
-                this.center = ( this.end - this.start ) / 2;
-            }
-            
-            var i;
-            var point:any;
-            var result = [];
-            var lastAngle:number = null;
-            var angle:number = null;
-            var last:any;
-            var pathDistance = txt.PathText.DISTANCE;
-            if( pathClosed ){ 
-                if( this.flipped ){
-                    i = this.start;
-                    result = [];
-                    while( i >= this.end ){
-                        if( i > pathLength ){
-                            i=0;
-                            break;
-                        }
-                        result.push( path.getPointAtLength( i ) );
-                        i = i + pathDistance;
-                    }
-                    while( i < this.end ){
-                        result.push( path.getPointAtLength( i ) );
-                        i = i + pathDistance;
-                    }
-                    return result;
-                }else{
-                    i = this.end;
-                    result = [];
-                    while( i >= this.start ){
-                        if( i > pathLength ){
-                            i=0;
-                            break;
-                        }
-                        result.push( path.getPointAtLength( i ) );
-                        i = i + pathDistance;
-                    }
-                    while( i < this.start ){
-                        result.push( path.getPointAtLength( i ) );
-                        i = i + pathDistance;
-                    }
-                    result.reverse();
-                    return result;
-                }
-            }else{ 
-                if( this.flipped ){
-                    i = this.start;
-                    result = [];
-                    while( i >= this.end ){
-                        if( i > pathLength ){
-                            i=0;
-                            break;
-                        }
-                        result.push( path.getPointAtLength( i ) );
-                        i = i + pathDistance;
-                    }
-                    while( i < this.end ){
-                        result.push( path.getPointAtLength( i ) );
-                        i = i + pathDistance;
-                    }
-                    return result;
-                }else{
-                    i = this.start;
-                    result = [];
-                    while( i <= this.end ){
-                        result.push( path.getPointAtLength( i ) );
-                        i = i + pathDistance;
-                    }
-                    return result;
-                }
             }
         }
     }

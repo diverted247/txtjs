@@ -1,3 +1,57 @@
+var txt;
+(function (txt) {
+    var Accessibility = (function () {
+        function Accessibility() {
+        }
+        Accessibility.set = function (element) {
+            if (element.stage == null) {
+                return;
+            }
+            if (txt.Accessibility.timeout != null) {
+                clearTimeout(txt.Accessibility.timeout);
+            }
+            if (element.accessibilityId == null) {
+                txt.Accessibility.data.push(element);
+                element.accessibilityId = txt.Accessibility.data.length - 1;
+            }
+            txt.Accessibility.timeout = setTimeout(txt.Accessibility.update, 300);
+        };
+        Accessibility.update = function () {
+            txt.Accessibility.timeout = null;
+            var data = txt.Accessibility.data.slice(0);
+            data.sort(function (a, b) {
+                return a.accessibilityPriority - b.accessibilityPriority;
+            });
+            var len = data.length;
+            var out = "";
+            var currentCanvas = data[0].stage.canvas;
+            for (var i = 0; i < len; i++) {
+                if (data[i].stage == null) {
+                    continue;
+                }
+                if (currentCanvas != data[i].stage.canvas) {
+                    currentCanvas.innerHTML = out;
+                    out = "";
+                    currentCanvas = data[i].stage.canvas;
+                }
+                if (data[i].accessibilityText == null) {
+                    out += '<p>' + data[i].text + '</p>';
+                }
+                else {
+                    out += data[i].accessibilityText;
+                }
+            }
+            currentCanvas.innerHTML = out;
+        };
+        Accessibility.clear = function () {
+            txt.Accessibility.data = [];
+        };
+        Accessibility.data = [];
+        Accessibility.timeout = null;
+        return Accessibility;
+    })();
+    txt.Accessibility = Accessibility;
+})(txt || (txt = {}));
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -29,6 +83,10 @@ var txt;
             this.debug = false;
             this.words = [];
             this.lines = [];
+            this.missingGlyphs = null;
+            this.accessibilityText = null;
+            this.accessibilityPriority = 2;
+            this.accessibilityId = null;
             if (props) {
                 this.set(props);
             }
@@ -57,9 +115,11 @@ var txt;
             this.layout();
         };
         Text.prototype.layout = function () {
+            txt.Accessibility.set(this);
             this.text = this.text.replace(/([\n][ \t]+)/g, '\n');
             this.words = [];
             this.lines = [];
+            this.missingGlyphs = null;
             this.removeAllChildren();
             this.block = new createjs.Container();
             this.addChild(this.block);
@@ -166,6 +226,12 @@ var txt;
                     return false;
                 }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
+                if (char.missing) {
+                    if (this.missingGlyphs == null) {
+                        this.missingGlyphs = [];
+                    }
+                    this.missingGlyphs.push({ position: i, character: this.text.charAt(i), font: currentStyle.font });
+                }
                 if (char.measuredHeight > vPosition) {
                     vPosition = char.measuredHeight;
                 }
@@ -429,6 +495,7 @@ var txt;
             this.measuredWidth = null;
             this.measuredHeight = null;
             this.hPosition = null;
+            this.missing = false;
             this.set(style);
             this.index = index;
             if (this.characterCase == txt.Case.NORMAL) {
@@ -461,6 +528,7 @@ var txt;
             if (this._glyph === undefined) {
                 console.log("MISSING GLYPH:" + this.character);
                 this._glyph = this._font.glyphs[42];
+                this.missing = true;
             }
             this.graphics = this._glyph.graphic();
             if (this.characterCase === txt.Case.SMALL_CAPS) {
@@ -1193,6 +1261,10 @@ var txt;
             this.debug = false;
             this.original = null;
             this.lines = [];
+            this.missingGlyphs = null;
+            this.accessibilityText = null;
+            this.accessibilityPriority = 2;
+            this.accessibilityId = null;
             if (props) {
                 this.original = props;
                 this.set(props);
@@ -1223,6 +1295,7 @@ var txt;
             this.getStage().update();
         };
         CharacterText.prototype.layout = function () {
+            txt.Accessibility.set(this);
             this.overset = false;
             if (this.original.size) {
                 this.size = this.original.size;
@@ -1236,6 +1309,7 @@ var txt;
                 this.text = this.text.split('\r').join('');
             }
             this.lines = [];
+            this.missingGlyphs = null;
             this.removeAllChildren();
             if (this.text === "" || this.text === undefined) {
                 this.render();
@@ -1277,7 +1351,7 @@ var txt;
                 this.block.addChild(s);
             }
             if (this.singleLine === true && (this.autoExpand === true || this.autoReduce === true)) {
-                this.autoMeasure();
+                this.measure();
             }
             if (this.characterLayout() === false) {
                 this.removeAllChildren();
@@ -1287,10 +1361,10 @@ var txt;
             this.render();
             this.complete();
         };
-        CharacterText.prototype.autoMeasure = function () {
+        CharacterText.prototype.measure = function () {
             var size = this.original.size;
             var len = this.text.length;
-            var width = this.width;
+            var width = this.getWidth();
             var defaultStyle = {
                 size: this.original.size,
                 font: this.original.font,
@@ -1358,7 +1432,7 @@ var txt;
                     if (this.minSize != null && this.size < this.minSize) {
                         this.size = this.minSize;
                     }
-                    return;
+                    return true;
                 }
             }
             else {
@@ -1374,7 +1448,7 @@ var txt;
                         this.tracking = trackMetric;
                     }
                     this.size = this.original.size;
-                    return;
+                    return true;
                 }
                 if (trackMetric < this.original.tracking && this.autoReduce) {
                     if (this.maxTracking != null && trackMetric > this.maxTracking) {
@@ -1384,15 +1458,19 @@ var txt;
                         this.tracking = trackMetric;
                     }
                     this.size = this.original.size;
-                    return;
+                    return true;
                 }
             }
+            return true;
         };
         CharacterText.prototype.trackingOffset = function (tracking, size, units) {
             return size * (2.5 / units + 1 / 900 + tracking / 990);
         };
         CharacterText.prototype.offsetTracking = function (offset, size, units) {
             return Math.floor((offset - 2.5 / units - 1 / 900) * 990 / size);
+        };
+        CharacterText.prototype.getWidth = function () {
+            return this.width;
         };
         CharacterText.prototype.characterLayout = function () {
             var len = this.text.length;
@@ -1476,6 +1554,12 @@ var txt;
                     return false;
                 }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
+                if (char.missing) {
+                    if (this.missingGlyphs == null) {
+                        this.missingGlyphs = [];
+                    }
+                    this.missingGlyphs.push({ position: i, character: this.text.charAt(i), font: currentStyle.font });
+                }
                 if (firstLine === true) {
                     if (vPosition < char.size) {
                         vPosition = char.size;
@@ -1668,18 +1752,33 @@ var txt;
             this.font = "belinda";
             this.tracking = 0;
             this.ligatures = false;
+            this.minSize = null;
+            this.maxTracking = null;
             this.fillColor = "#000";
             this.strokeColor = null;
             this.strokeWidth = null;
             this.style = null;
             this.debug = false;
+            this.original = null;
+            this.autoExpand = false;
+            this.autoReduce = false;
+            this.overset = false;
+            this.oversetIndex = null;
+            this.pathPoints = null;
             this.path = "";
             this.start = 0;
-            this.center = null;
             this.end = null;
             this.flipped = false;
+            this.fit = 0 /* Rainbow */;
+            this.align = 0 /* Center */;
+            this.missingGlyphs = null;
+            this.accessibilityText = null;
+            this.accessibilityPriority = 2;
+            this.accessibilityId = null;
             if (props) {
+                this.original = props;
                 this.set(props);
+                this.original.tracking = this.tracking;
             }
             if (this.style == null) {
                 txt.FontLoader.load(this, [this.font]);
@@ -1696,22 +1795,89 @@ var txt;
                 }
                 txt.FontLoader.load(this, fonts);
             }
-            this.points = this.pathToPoints();
+            this.pathPoints = new txt.Path(this.path, this.start, this.end, this.flipped, this.fit, this.align);
         }
+        PathText.prototype.setPath = function (path) {
+            this.path = path;
+            this.pathPoints.path = this.path;
+            this.pathPoints.update();
+        };
+        PathText.prototype.setStart = function (start) {
+            this.start = start;
+            this.pathPoints.start = this.start;
+            this.pathPoints.update();
+        };
+        PathText.prototype.setEnd = function (end) {
+            this.end = end;
+            this.pathPoints.end = this.end;
+            this.pathPoints.update();
+        };
+        PathText.prototype.setFlipped = function (flipped) {
+            this.flipped = flipped;
+            this.pathPoints.flipped = this.flipped;
+            this.pathPoints.update();
+        };
+        PathText.prototype.setFit = function (fit) {
+            if (fit === void 0) { fit = 0 /* Rainbow */; }
+            this.fit = fit;
+            this.pathPoints.fit = this.fit;
+            this.pathPoints.update();
+        };
+        PathText.prototype.setAlign = function (align) {
+            if (align === void 0) { align = 0 /* Center */; }
+            this.align = align;
+            this.pathPoints.align = this.align;
+            this.pathPoints.update();
+        };
         PathText.prototype.fontLoaded = function () {
             this.layout();
         };
         PathText.prototype.render = function () {
             this.getStage().update();
         };
+        PathText.prototype.getWidth = function () {
+            return this.pathPoints.realLength;
+        };
         PathText.prototype.layout = function () {
+            txt.Accessibility.set(this);
             this.removeAllChildren();
             this.characters = [];
+            this.missingGlyphs = null;
             if (this.debug == true) {
                 var s = new createjs.Shape();
                 s.graphics.beginStroke("#FF0000");
                 s.graphics.setStrokeStyle(0.1);
                 s.graphics.decodeSVGPath(this.path);
+                s.graphics.endFill();
+                s.graphics.endStroke();
+                this.addChild(s);
+                s = new createjs.Shape();
+                var pp = this.pathPoints.getRealPathPoint(0);
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill("black");
+                s.graphics.drawCircle(0, 0, 2);
+                this.addChild(s);
+                s = new createjs.Shape();
+                var pp = this.pathPoints.getRealPathPoint(this.pathPoints.start);
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill("green");
+                s.graphics.drawCircle(0, 0, 2);
+                this.addChild(s);
+                s = new createjs.Shape();
+                pp = this.pathPoints.getRealPathPoint(this.pathPoints.end);
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill("red");
+                s.graphics.drawCircle(0, 0, 2);
+                this.addChild(s);
+                s = new createjs.Shape();
+                pp = this.pathPoints.getRealPathPoint(this.pathPoints.center);
+                s.x = pp.x;
+                s.y = pp.y;
+                s.graphics.beginFill("blue");
+                s.graphics.drawCircle(0, 0, 2);
                 this.addChild(s);
             }
             if (this.text === "" || this.text === undefined) {
@@ -1720,11 +1886,119 @@ var txt;
             }
             this.block = new createjs.Container();
             this.addChild(this.block);
+            if (this.autoExpand === true || this.autoReduce === true) {
+                if (this.measure() === false) {
+                    this.removeAllChildren();
+                    return;
+                }
+            }
             if (this.characterLayout() === false) {
                 this.removeAllChildren();
                 return;
             }
             this.render();
+        };
+        PathText.prototype.measure = function () {
+            var size = this.original.size;
+            var len = this.text.length;
+            var width = this.getWidth();
+            var defaultStyle = {
+                size: this.original.size,
+                font: this.original.font,
+                tracking: this.original.tracking,
+                characterCase: this.original.characterCase
+            };
+            var currentStyle;
+            var charCode = null;
+            var font;
+            var charMetrics = [];
+            var largestFontSize = defaultStyle.size;
+            for (var i = 0; i < len; i++) {
+                charCode = this.text.charCodeAt(i);
+                currentStyle = defaultStyle;
+                if (this.original.style !== undefined && this.original.style[i] !== undefined) {
+                    currentStyle = this.original.style[i];
+                    if (currentStyle.size === undefined)
+                        currentStyle.size = defaultStyle.size;
+                    if (currentStyle.font === undefined)
+                        currentStyle.font = defaultStyle.font;
+                    if (currentStyle.tracking === undefined)
+                        currentStyle.tracking = defaultStyle.tracking;
+                }
+                if (currentStyle.size > largestFontSize) {
+                    largestFontSize = currentStyle.size;
+                }
+                font = txt.FontLoader.fonts[currentStyle.font];
+                charMetrics.push({
+                    char: this.text[i],
+                    size: currentStyle.size,
+                    charCode: charCode,
+                    font: currentStyle.font,
+                    offset: font.glyphs[charCode].offset,
+                    units: font.units,
+                    tracking: this.trackingOffset(currentStyle.tracking, currentStyle.size, font.units),
+                    kerning: font.glyphs[charCode].getKerning(this.getCharCodeAt(i + 1), 1)
+                });
+            }
+            var space = {
+                char: " ",
+                size: currentStyle.size,
+                charCode: 32,
+                font: currentStyle.font,
+                offset: font.glyphs[32].offset,
+                units: font.units,
+                tracking: 0,
+                kerning: 0
+            };
+            charMetrics[charMetrics.length - 1].tracking = 0;
+            len = charMetrics.length;
+            var metricBaseWidth = 0;
+            var metricRealWidth = 0;
+            var metricRealWidthTracking = 0;
+            var current = null;
+            for (var i = 0; i < len; i++) {
+                current = charMetrics[i];
+                metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
+                metricRealWidth = metricRealWidth + ((current.offset + current.kerning) * current.size);
+                metricRealWidthTracking = metricRealWidthTracking + ((current.offset + current.kerning + current.tracking) * current.size);
+            }
+            if (metricRealWidth > width) {
+                if (this.autoReduce === true) {
+                    this.tracking = 0;
+                    this.size = this.original.size * width / (metricRealWidth + (space.offset * space.size));
+                    if (this.minSize != null && this.size < this.minSize) {
+                        this.size = this.minSize;
+                    }
+                    return true;
+                }
+            }
+            else {
+                var trackMetric = this.offsetTracking((width - metricRealWidth) / (len), current.size, current.units);
+                if (trackMetric < 0) {
+                    trackMetric = 0;
+                }
+                if (trackMetric > this.original.tracking && this.autoExpand) {
+                    if (this.maxTracking != null && trackMetric > this.maxTracking) {
+                        this.tracking = this.maxTracking;
+                    }
+                    else {
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    return true;
+                }
+                if (trackMetric < this.original.tracking && this.autoReduce) {
+                    if (this.maxTracking != null && trackMetric > this.maxTracking) {
+                        this.tracking = this.maxTracking;
+                    }
+                    else {
+                        this.tracking = trackMetric;
+                    }
+                    this.size = this.original.size;
+                    return true;
+                }
+            }
+            return true;
         };
         PathText.prototype.characterLayout = function () {
             var len = this.text.length;
@@ -1742,14 +2016,7 @@ var txt;
             var hPosition = 0;
             var charKern;
             var tracking;
-            var point;
-            var p0Distance;
-            var p0;
-            var p1;
-            var p2;
             var angle;
-            var pathDistance = txt.PathText.DISTANCE;
-            var pointLength = this.points.length;
             for (var i = 0; i < len; i++) {
                 if (this.style !== null && this.style[i] !== undefined) {
                     currentStyle = this.style[i];
@@ -1776,6 +2043,12 @@ var txt;
                     return false;
                 }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
+                if (char.missing) {
+                    if (this.missingGlyphs == null) {
+                        this.missingGlyphs = [];
+                    }
+                    this.missingGlyphs.push({ position: i, character: this.text.charAt(i), font: currentStyle.font });
+                }
                 if (currentStyle.tracking == 0 && this.ligatures == true) {
                     var ligTarget = this.text.substr(i, 4);
                     if (char._font.ligatures[ligTarget.charAt(0)]) {
@@ -1802,35 +2075,47 @@ var txt;
                 this.block.addChild(char);
                 hPosition = hPosition + (char._glyph.offset * char.size) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning(this.getCharCodeAt(i + 1), char.size);
             }
-            var offsetStart = Math.round((pointLength * pathDistance - hPosition) / 2);
             len = this.characters.length;
+            var pathPoint;
+            var nextRotation = false;
             for (i = 0; i < len; i++) {
                 char = this.characters[i];
-                p0Distance = Math.round((offsetStart + char.hPosition) / pathDistance);
-                p0 = this.points[p0Distance];
-                if (p0 == undefined) {
-                    break;
+                pathPoint = this.pathPoints.getPathPoint(char.hPosition, hPosition, char._glyph.offset * char.size);
+                char.x = pathPoint.x;
+                char.y = pathPoint.y;
+                if (nextRotation == true) {
+                    this.characters[i - 1].parent.rotation = pathPoint.rotation;
+                    nextRotation = false;
                 }
-                char.x = p0.x;
-                char.y = p0.y;
-                p0 = this.points[p0Distance + 15];
-                if (i + 35 < pointLength) {
-                    p1 = this.points[p0Distance + 35];
-                    angle = Math.atan((p0.y - p1.y) / (p0.x - p1.x)) * 180 / Math.PI;
-                    if (p0.x >= p1.x) {
-                        angle = angle + 180;
-                    }
+                if (pathPoint.next == true) {
+                    nextRotation = true;
+                }
+                char.rotation = pathPoint.rotation;
+                if (pathPoint.offsetX) {
+                    var offsetChild = new createjs.Container();
+                    offsetChild.x = pathPoint.x;
+                    offsetChild.y = pathPoint.y;
+                    offsetChild.rotation = pathPoint.rotation;
+                    char.parent.removeChild(char);
+                    offsetChild.addChild(char);
+                    char.x = pathPoint.offsetX;
+                    char.y = 0;
+                    char.rotation = 0;
+                    this.addChild(offsetChild);
                 }
                 else {
-                    p1 = this.points[p0Distance - 35];
-                    angle = Math.atan((p1.y - p0.y) / (p1.x - p0.x)) * 180 / Math.PI;
-                    if (p1.x >= p0.x) {
-                        angle = angle + 180;
-                    }
+                    char.x = pathPoint.x;
+                    char.y = pathPoint.y;
+                    char.rotation = pathPoint.rotation;
                 }
-                char.rotation = angle;
             }
             return true;
+        };
+        PathText.prototype.trackingOffset = function (tracking, size, units) {
+            return size * (2.5 / units + 1 / 900 + tracking / 990);
+        };
+        PathText.prototype.offsetTracking = function (offset, size, units) {
+            return Math.floor((offset - 2.5 / units - 1 / 900) * 990 / size);
         };
         PathText.prototype.getCharCodeAt = function (index) {
             if (this.characterCase == txt.Case.NORMAL) {
@@ -1849,94 +2134,429 @@ var txt;
                 return this.text.charAt(index).charCodeAt(0);
             }
         };
-        PathText.prototype.pathToPoints = function () {
-            var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttributeNS(null, "d", this.path);
-            var pathLength = path.getTotalLength();
-            var pathClosed = (this.path.toLowerCase().indexOf('z') != -1);
-            if (this.end == null) {
-                this.end = pathLength;
-            }
-            if (this.center == null) {
-                this.center = (this.end - this.start) / 2;
-            }
-            var i;
-            var point;
-            var result = [];
-            var lastAngle = null;
-            var angle = null;
-            var last;
-            var pathDistance = txt.PathText.DISTANCE;
-            if (pathClosed) {
-                if (this.flipped) {
-                    i = this.start;
-                    result = [];
-                    while (i >= this.end) {
-                        if (i > pathLength) {
-                            i = 0;
-                            break;
-                        }
-                        result.push(path.getPointAtLength(i));
-                        i = i + pathDistance;
-                    }
-                    while (i < this.end) {
-                        result.push(path.getPointAtLength(i));
-                        i = i + pathDistance;
-                    }
-                    return result;
-                }
-                else {
-                    i = this.end;
-                    result = [];
-                    while (i >= this.start) {
-                        if (i > pathLength) {
-                            i = 0;
-                            break;
-                        }
-                        result.push(path.getPointAtLength(i));
-                        i = i + pathDistance;
-                    }
-                    while (i < this.start) {
-                        result.push(path.getPointAtLength(i));
-                        i = i + pathDistance;
-                    }
-                    result.reverse();
-                    return result;
-                }
-            }
-            else {
-                if (this.flipped) {
-                    i = this.start;
-                    result = [];
-                    while (i >= this.end) {
-                        if (i > pathLength) {
-                            i = 0;
-                            break;
-                        }
-                        result.push(path.getPointAtLength(i));
-                        i = i + pathDistance;
-                    }
-                    while (i < this.end) {
-                        result.push(path.getPointAtLength(i));
-                        i = i + pathDistance;
-                    }
-                    return result;
-                }
-                else {
-                    i = this.start;
-                    result = [];
-                    while (i <= this.end) {
-                        result.push(path.getPointAtLength(i));
-                        i = i + pathDistance;
-                    }
-                    return result;
-                }
-            }
-        };
-        PathText.DISTANCE = 0.1;
         return PathText;
     })(createjs.Container);
     txt.PathText = PathText;
+})(txt || (txt = {}));
+var txt;
+(function (txt) {
+    (function (PathFit) {
+        PathFit[PathFit["Rainbow"] = 0] = "Rainbow";
+        PathFit[PathFit["Stairstep"] = 1] = "Stairstep";
+    })(txt.PathFit || (txt.PathFit = {}));
+    var PathFit = txt.PathFit;
+    ;
+    (function (PathAlign) {
+        PathAlign[PathAlign["Center"] = 0] = "Center";
+        PathAlign[PathAlign["Right"] = 1] = "Right";
+        PathAlign[PathAlign["Left"] = 2] = "Left";
+    })(txt.PathAlign || (txt.PathAlign = {}));
+    var PathAlign = txt.PathAlign;
+    ;
+    var Path = (function () {
+        function Path(path, start, end, flipped, fit, align) {
+            if (start === void 0) { start = 0; }
+            if (end === void 0) { end = null; }
+            if (flipped === void 0) { flipped = false; }
+            if (fit === void 0) { fit = 0 /* Rainbow */; }
+            if (align === void 0) { align = 0 /* Center */; }
+            this.pathElement = null;
+            this.path = null;
+            this.start = 0;
+            this.center = null;
+            this.end = null;
+            this.angles = null;
+            this.flipped = false;
+            this.fit = 0 /* Rainbow */;
+            this.align = 0 /* Center */;
+            this.length = null;
+            this.realLength = null;
+            this.closed = false;
+            this.clockwise = true;
+            this.path = path;
+            this.start = start;
+            this.align = align;
+            this.end = end;
+            this.flipped = flipped;
+            this.fit = fit;
+            this.update();
+        }
+        Path.prototype.update = function () {
+            this.pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            this.pathElement.setAttributeNS(null, "d", this.path);
+            this.length = this.pathElement.getTotalLength();
+            this.closed = (this.path.toLowerCase().indexOf('z') != -1);
+            var pointlength = this.length / 10;
+            var points = [];
+            points.push(this.getRealPathPoint(0));
+            points.push(this.getRealPathPoint(pointlength));
+            points.push(this.getRealPathPoint(pointlength * 2));
+            points.push(this.getRealPathPoint(pointlength * 3));
+            points.push(this.getRealPathPoint(pointlength * 4));
+            points.push(this.getRealPathPoint(pointlength * 5));
+            points.push(this.getRealPathPoint(pointlength * 6));
+            points.push(this.getRealPathPoint(pointlength * 7));
+            points.push(this.getRealPathPoint(pointlength * 8));
+            points.push(this.getRealPathPoint(pointlength * 9));
+            points.push(this.getRealPathPoint(pointlength * 10));
+            var clock = (points[1].x - points[0].x) * (points[1].y + points[0].y) + (points[2].x - points[1].x) * (points[2].y + points[1].y) + (points[3].x - points[2].x) * (points[3].y + points[2].y) + (points[4].x - points[3].x) * (points[4].y + points[3].y) + (points[5].x - points[4].x) * (points[5].y + points[4].y) + (points[6].x - points[5].x) * (points[6].y + points[5].y) + (points[7].x - points[6].x) * (points[7].y + points[6].y) + (points[8].x - points[7].x) * (points[8].y + points[7].y) + (points[9].x - points[8].x) * (points[9].y + points[8].y) + (points[10].x - points[9].x) * (points[10].y + points[9].y);
+            if (clock > 0) {
+                this.clockwise = false;
+            }
+            else {
+                this.clockwise = true;
+            }
+            if (this.end == null) {
+                this.end = this.length;
+            }
+            if (this.closed == false) {
+                if (this.flipped == false) {
+                    if (this.start > this.end) {
+                        this.realLength = this.start - this.end;
+                        this.center = this.start - this.realLength / 2;
+                    }
+                    else {
+                        this.realLength = this.end - this.start;
+                        this.center = this.start + this.realLength / 2;
+                    }
+                }
+                else {
+                    if (this.start > this.end) {
+                        this.realLength = this.start - this.end;
+                        this.center = this.start - this.realLength / 2;
+                    }
+                    else {
+                        this.realLength = this.end - this.start;
+                        this.center = this.start + this.realLength / 2;
+                    }
+                }
+            }
+            else if (this.clockwise == false) {
+                if (this.flipped == false) {
+                    if (this.start > this.end) {
+                        this.realLength = this.start - this.end;
+                        this.center = this.end + this.realLength / 2;
+                    }
+                    else {
+                        this.realLength = (this.start + this.length - this.end);
+                        this.center = this.end + this.realLength / 2;
+                        if (this.center > this.length) {
+                            this.center = this.center - this.length;
+                        }
+                    }
+                }
+                else {
+                    if (this.start > this.end) {
+                        this.realLength = (this.end + this.length - this.start);
+                        this.center = this.start + this.realLength / 2;
+                        if (this.center > this.length) {
+                            this.center = this.center - this.length;
+                        }
+                    }
+                    else {
+                        this.realLength = this.end - this.start;
+                        this.center = this.start + this.realLength / 2;
+                    }
+                }
+            }
+            else {
+                if (this.flipped == false) {
+                    if (this.start > this.end) {
+                        this.realLength = this.end + this.length - this.start;
+                        this.center = this.start + this.realLength / 2;
+                        if (this.center > this.length) {
+                            this.center = this.center - this.length;
+                        }
+                    }
+                    else {
+                        this.realLength = this.end - this.start;
+                        this.center = this.start + this.realLength / 2;
+                    }
+                }
+                else {
+                    if (this.start > this.end) {
+                        this.realLength = this.start - this.end;
+                        this.center = this.end + this.realLength / 2;
+                    }
+                    else {
+                        this.realLength = this.start + this.length - this.end;
+                        this.center = this.end + this.realLength / 2;
+                        if (this.center > this.length) {
+                            this.center = this.center - this.length;
+                        }
+                    }
+                }
+            }
+        };
+        Path.prototype.getRealPathPoint = function (distance) {
+            if (distance > this.length) {
+                return this.pathElement.getPointAtLength(distance - this.length);
+            }
+            else if (distance < 0) {
+                return this.pathElement.getPointAtLength(distance + this.length);
+            }
+            else {
+                return this.pathElement.getPointAtLength(distance);
+            }
+        };
+        Path.prototype.getPathPoint = function (distance, characterLength, charOffset) {
+            if (characterLength === void 0) { characterLength = 0; }
+            if (charOffset === void 0) { charOffset = 0; }
+            distance = distance * 0.99;
+            characterLength = characterLength * 0.99;
+            var point0;
+            var point1;
+            var point2;
+            var position;
+            var direction = true;
+            var realStart = 0;
+            if (this.closed == false) {
+                if (this.flipped == false) {
+                    if (this.start > this.end) {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start - (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start - this.realLength - characterLength;
+                        }
+                        position = realStart - distance;
+                        direction = false;
+                    }
+                    else {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start + (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start + this.realLength - characterLength;
+                        }
+                        position = realStart + distance;
+                    }
+                }
+                else {
+                    if (this.start > this.end) {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start - (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start - this.realLength - characterLength;
+                        }
+                        position = realStart - distance;
+                        direction = false;
+                    }
+                    else {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start + (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start + this.realLength - characterLength;
+                        }
+                        position = realStart - distance;
+                    }
+                }
+            }
+            else if (this.clockwise == false) {
+                if (this.flipped == false) {
+                    if (this.start > this.end) {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start - (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start - this.realLength - characterLength;
+                        }
+                        position = realStart - distance;
+                        direction = false;
+                    }
+                    else {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                            position = realStart - distance;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start - (this.realLength - characterLength) / 2;
+                            position = realStart - distance;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start - this.realLength - characterLength;
+                            position = realStart - distance;
+                        }
+                        if (position < 0) {
+                            position = position + this.length;
+                        }
+                        direction = false;
+                    }
+                }
+                else {
+                    if (this.start > this.end) {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                            position = realStart + distance;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start + (this.realLength - characterLength) / 2;
+                            position = realStart + distance;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start + this.realLength - characterLength;
+                            position = realStart + distance;
+                        }
+                        if (position > this.length) {
+                            position = position - this.length;
+                        }
+                    }
+                    else {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start + (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start + this.realLength - characterLength;
+                        }
+                        position = realStart + distance;
+                    }
+                }
+            }
+            else {
+                if (this.flipped == false) {
+                    if (this.start > this.end) {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                            position = realStart - distance;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start - (this.realLength - characterLength) / 2;
+                            position = realStart - distance;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start - this.realLength - characterLength;
+                            position = realStart - distance;
+                        }
+                        if (position < 0) {
+                            position = position + this.length;
+                        }
+                        direction = false;
+                    }
+                    else {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start - (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start - this.realLength - characterLength;
+                        }
+                        position = realStart - distance;
+                        direction = false;
+                    }
+                }
+                else {
+                    if (this.start > this.end) {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start + (this.realLength - characterLength) / 2;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start + this.realLength - characterLength;
+                        }
+                        position = realStart + distance;
+                    }
+                    else {
+                        if (this.align == 2 /* Left */) {
+                            realStart = this.start;
+                            position = realStart + distance;
+                        }
+                        else if (this.align == 0 /* Center */) {
+                            realStart = this.start + (this.realLength - characterLength) / 2;
+                            position = realStart + distance;
+                        }
+                        else if (this.align == 1 /* Right */) {
+                            realStart = this.start + this.realLength - characterLength;
+                            position = realStart + distance;
+                        }
+                        if (position > this.length) {
+                            position = position - this.length;
+                        }
+                    }
+                }
+            }
+            point1 = this.getRealPathPoint(position);
+            var segment = this.pathElement.pathSegList.getItem(this.pathElement.getPathSegAtLength(position)).pathSegType;
+            if (segment == 4) {
+                if (direction) {
+                }
+                else {
+                    if (this.pathElement.getPathSegAtLength(position) != this.pathElement.getPathSegAtLength(position - charOffset)) {
+                        var pp0 = this.getRealPathPoint(position);
+                        var pp1 = this.getRealPathPoint(position - charOffset);
+                        var ppc = this.pathElement.pathSegList.getItem(this.pathElement.getPathSegAtLength(position) - 1);
+                        var d0 = Math.sqrt(Math.pow((pp0.x - ppc['x']), 2) + Math.pow((pp0.y - ppc['y']), 2));
+                        var d1 = Math.sqrt(Math.pow((pp1.x - ppc['x']), 2) + Math.pow((pp1.y - ppc['y']), 2));
+                        if (d0 > d1) {
+                            point1 = pp0;
+                            point2 = { x: ppc['x'], y: ppc['y'] };
+                            var rot12 = Math.atan((point2.y - point1.y) / (point2.x - point1.x)) * 180 / Math.PI;
+                            if (point1.x > point2.x) {
+                                rot12 = rot12 + 180;
+                            }
+                            if (rot12 < 0) {
+                                rot12 = rot12 + 360;
+                            }
+                            if (rot12 > 360) {
+                                rot12 = rot12 - 360;
+                            }
+                            point1.rotation = rot12;
+                            return point1;
+                        }
+                        else {
+                            point1 = { x: ppc['x'], y: ppc['y'] };
+                            point1.offsetX = -d0;
+                            point1['next'] = true;
+                            return point1;
+                        }
+                    }
+                }
+            }
+            if (direction) {
+                point2 = this.getRealPathPoint(position + charOffset);
+            }
+            else {
+                point2 = this.getRealPathPoint(position - charOffset);
+            }
+            var rot12 = Math.atan((point2.y - point1.y) / (point2.x - point1.x)) * 180 / Math.PI;
+            if (point1.x > point2.x) {
+                rot12 = rot12 + 180;
+            }
+            if (rot12 < 0) {
+                rot12 = rot12 + 360;
+            }
+            if (rot12 > 360) {
+                rot12 = rot12 - 360;
+            }
+            point1.rotation = rot12;
+            return point1;
+        };
+        return Path;
+    })();
+    txt.Path = Path;
 })(txt || (txt = {}));
 var txt;
 (function (txt) {

@@ -16,6 +16,7 @@ module txt {
         measuredWidth:number = null;
         measuredHeight:number = null;
         hPosition:number = null;
+        missing:boolean = false;
 
         _glyph:txt.Glyph;
         _font:txt.Font;
@@ -62,6 +63,7 @@ module txt {
             if( this._glyph === undefined ){
                 console.log( "MISSING GLYPH:" + this.character );
                 this._glyph = this._font.glyphs[ 42 ];
+                this.missing = true;
             }
             this.graphics = this._glyph.graphic();
 

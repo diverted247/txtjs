@@ -30,6 +30,15 @@ declare module txt {
     }
 }
 declare module txt {
+    class Accessibility {
+        static data: any;
+        static timeout: any;
+        static set(element: any): void;
+        static update(): void;
+        static clear(): void;
+    }
+}
+declare module txt {
     class Text extends createjs.Container {
         text: string;
         lineHeight: number;
@@ -50,6 +59,10 @@ declare module txt {
         words: Word[];
         lines: Line[];
         block: createjs.Container;
+        missingGlyphs: any[];
+        accessibilityText: string;
+        accessibilityPriority: number;
+        accessibilityId: number;
         constructor(props?: ConstructObj);
         render(): void;
         complete(): void;
@@ -76,6 +89,7 @@ declare module txt {
         measuredWidth: number;
         measuredHeight: number;
         hPosition: number;
+        missing: boolean;
         _glyph: txt.Glyph;
         _font: txt.Font;
         constructor(character: string, style: {}, index?: number, glyph?: txt.Glyph);
@@ -226,14 +240,19 @@ declare module txt {
         original: ConstructObj;
         lines: Line[];
         block: createjs.Container;
+        missingGlyphs: any[];
+        accessibilityText: string;
+        accessibilityPriority: number;
+        accessibilityId: number;
         constructor(props?: ConstructObj);
         complete(): void;
         fontLoaded(): void;
         render(): void;
         layout(): void;
-        autoMeasure(): void;
+        measure(): boolean;
         trackingOffset(tracking: number, size: number, units: number): number;
         offsetTracking(offset: number, size: number, units: number): number;
+        getWidth(): number;
         characterLayout(): boolean;
         getCharCodeAt(index: number): number;
         lineLayout(): void;
@@ -247,27 +266,83 @@ declare module txt {
         font: string;
         tracking: number;
         ligatures: boolean;
+        minSize: number;
+        maxTracking: number;
         fillColor: string;
         strokeColor: string;
         strokeWidth: number;
         style: Style[];
         debug: boolean;
-        points: any[];
         characters: txt.Character[];
+        block: createjs.Container;
+        original: ConstructObj;
+        autoExpand: boolean;
+        autoReduce: boolean;
+        overset: boolean;
+        oversetIndex: number;
+        pathPoints: txt.Path;
+        path: string;
+        start: number;
+        end: number;
+        flipped: boolean;
+        fit: PathFit;
+        align: PathAlign;
+        missingGlyphs: any[];
+        accessibilityText: string;
+        accessibilityPriority: number;
+        accessibilityId: number;
+        constructor(props?: ConstructObj);
+        setPath(path: string): void;
+        setStart(start: number): void;
+        setEnd(end: number): void;
+        setFlipped(flipped: boolean): void;
+        setFit(fit?: txt.PathFit): void;
+        setAlign(align?: PathAlign): void;
+        fontLoaded(): void;
+        render(): void;
+        getWidth(): number;
+        layout(): void;
+        measure(): boolean;
+        characterLayout(): boolean;
+        trackingOffset(tracking: number, size: number, units: number): number;
+        offsetTracking(offset: number, size: number, units: number): number;
+        getCharCodeAt(index: number): number;
+    }
+}
+declare module txt {
+    enum PathFit {
+        Rainbow = 0,
+        Stairstep = 1,
+    }
+    interface PathPoint {
+        x: number;
+        y: number;
+        rotation?: number;
+        offsetX?: number;
+    }
+    enum PathAlign {
+        Center = 0,
+        Right = 1,
+        Left = 2,
+    }
+    class Path {
+        private pathElement;
         path: string;
         start: number;
         center: number;
         end: number;
+        angles: any[];
         flipped: boolean;
-        static DISTANCE: number;
-        block: createjs.Container;
-        constructor(props?: ConstructObj);
-        fontLoaded(): void;
-        render(): void;
-        layout(): void;
-        characterLayout(): boolean;
-        getCharCodeAt(index: number): number;
-        pathToPoints(): any[];
+        fit: PathFit;
+        align: PathAlign;
+        length: number;
+        realLength: number;
+        closed: boolean;
+        clockwise: boolean;
+        constructor(path: string, start?: number, end?: number, flipped?: boolean, fit?: PathFit, align?: PathAlign);
+        update(): void;
+        getRealPathPoint(distance: number): txt.PathPoint;
+        getPathPoint(distance: number, characterLength?: number, charOffset?: number): txt.PathPoint;
     }
 }
 declare module txt {

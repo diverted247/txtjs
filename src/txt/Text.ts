@@ -21,6 +21,12 @@ module txt {
         words:Word[] = [];
         lines:Line[] = [];
         block:createjs.Container;
+        missingGlyphs:any[] = null;
+
+        //accessibility
+        accessibilityText:string = null;
+        accessibilityPriority:number = 2;
+        accessibilityId:number = null;
 
         constructor( props:ConstructObj = null ){
             super();
@@ -54,9 +60,14 @@ module txt {
         }
 
         layout(){
+
+            //accessibility api
+            txt.Accessibility.set( this );
+
             this.text = this.text.replace( /([\n][ \t]+)/g , '\n' );
             this.words = [];
             this.lines = [];
+            this.missingGlyphs = null;
             // TODO - remove composite layout 
             this.removeAllChildren();
 
@@ -197,7 +208,13 @@ module txt {
 
                 // create character
                 char = new Character( this.text.charAt( i ) , currentStyle , i );
-                
+                if( char.missing ){
+                    if( this.missingGlyphs == null ){
+                        this.missingGlyphs = [];
+                    }
+                    this.missingGlyphs.push( { position:i, character:this.text.charAt( i ), font:currentStyle.font } );
+                }
+
                 if( char.measuredHeight > vPosition ){
                     vPosition = char.measuredHeight;
                 }
