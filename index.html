@@ -257,6 +257,12 @@
                         <a href="/examples/PathText/alignment.html">Alignment</a>
                     </li>
                     <li>
+                        <a href="/examples/PathText/vertical_alignment.html">Vertical Alignment</a>
+                    </li>
+                    <li>
+                        <a href="/examples/PathText/vertical_alignment_layout.html">Vertical Alignment Layout</a>
+                    </li>
+                    <li>
                         <a href="/examples/PathText/flipped.html">Flipped</a>
                     </li>
 				</ul>
@@ -386,7 +392,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         stage = new createjs.Stage(canvas);
         
         var text = new txt.Text( { 
-            text:'Written to <canvas> with txtjs. Welcome.\nv0.9.0',
+            text:'Written to <canvas> with txtjs. Welcome.\nv0.9.1',
             font:'raleway',
             align:txt.Align.MIDDLE_CENTER,
             tracking:-5,
@@ -396,7 +402,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             size:100,
             x:0,
             y:0,
-            accessibilityText:'Written to canvas with txtjs. Welcome. v0.9.0'
+            accessibilityText:'Written to canvas with txtjs. Welcome. v0.9.1'
         } );
         
         stage.addChild( text );

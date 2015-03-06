@@ -1741,6 +1741,15 @@ var txt;
 })(txt || (txt = {}));
 var txt;
 (function (txt) {
+    (function (VerticalAlign) {
+        VerticalAlign[VerticalAlign["Top"] = 0] = "Top";
+        VerticalAlign[VerticalAlign["CapHeight"] = 1] = "CapHeight";
+        VerticalAlign[VerticalAlign["Center"] = 2] = "Center";
+        VerticalAlign[VerticalAlign["BaseLine"] = 3] = "BaseLine";
+        VerticalAlign[VerticalAlign["Bottom"] = 4] = "Bottom";
+    })(txt.VerticalAlign || (txt.VerticalAlign = {}));
+    var VerticalAlign = txt.VerticalAlign;
+    ;
     var PathText = (function (_super) {
         __extends(PathText, _super);
         function PathText(props) {
@@ -1771,6 +1780,7 @@ var txt;
             this.flipped = false;
             this.fit = 0 /* Rainbow */;
             this.align = 0 /* Center */;
+            this.valign = 3 /* BaseLine */;
             this.missingGlyphs = null;
             this.accessibilityText = null;
             this.accessibilityPriority = 2;
@@ -2081,8 +2091,6 @@ var txt;
             for (i = 0; i < len; i++) {
                 char = this.characters[i];
                 pathPoint = this.pathPoints.getPathPoint(char.hPosition, hPosition, char._glyph.offset * char.size);
-                char.x = pathPoint.x;
-                char.y = pathPoint.y;
                 if (nextRotation == true) {
                     this.characters[i - 1].parent.rotation = pathPoint.rotation;
                     nextRotation = false;
@@ -2091,22 +2099,52 @@ var txt;
                     nextRotation = true;
                 }
                 char.rotation = pathPoint.rotation;
-                if (pathPoint.offsetX) {
+                if (this.valign == 3 /* BaseLine */) {
+                    char.x = pathPoint.x;
+                    char.y = pathPoint.y;
+                    if (pathPoint.offsetX) {
+                        var offsetChild = new createjs.Container();
+                        offsetChild.x = pathPoint.x;
+                        offsetChild.y = pathPoint.y;
+                        offsetChild.rotation = pathPoint.rotation;
+                        char.parent.removeChild(char);
+                        offsetChild.addChild(char);
+                        char.x = pathPoint.offsetX;
+                        char.y = 0;
+                        char.rotation = 0;
+                        this.addChild(offsetChild);
+                    }
+                    else {
+                        char.x = pathPoint.x;
+                        char.y = pathPoint.y;
+                        char.rotation = pathPoint.rotation;
+                    }
+                }
+                else {
                     var offsetChild = new createjs.Container();
                     offsetChild.x = pathPoint.x;
                     offsetChild.y = pathPoint.y;
                     offsetChild.rotation = pathPoint.rotation;
                     char.parent.removeChild(char);
                     offsetChild.addChild(char);
-                    char.x = pathPoint.offsetX;
-                    char.y = 0;
+                    char.x = 0;
+                    if (this.valign == 0 /* Top */) {
+                        char.y = char.size;
+                    }
+                    else if (this.valign == 4 /* Bottom */) {
+                        char.y = char._font.descent / char._font.units * char.size;
+                    }
+                    else if (this.valign == 1 /* CapHeight */) {
+                        char.y = char._font['cap-height'] / char._font.units * char.size;
+                    }
+                    else if (this.valign == 2 /* Center */) {
+                        char.y = char._font['cap-height'] / char._font.units * char.size / 2;
+                    }
+                    else {
+                        char.y = 0;
+                    }
                     char.rotation = 0;
                     this.addChild(offsetChild);
-                }
-                else {
-                    char.x = pathPoint.x;
-                    char.y = pathPoint.y;
-                    char.rotation = pathPoint.rotation;
                 }
             }
             return true;

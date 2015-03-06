@@ -259,6 +259,13 @@ declare module txt {
     }
 }
 declare module txt {
+    enum VerticalAlign {
+        Top = 0,
+        CapHeight = 1,
+        Center = 2,
+        BaseLine = 3,
+        Bottom = 4,
+    }
     class PathText extends createjs.Container {
         text: string;
         characterCase: number;
@@ -287,6 +294,7 @@ declare module txt {
         flipped: boolean;
         fit: PathFit;
         align: PathAlign;
+        valign: VerticalAlign;
         missingGlyphs: any[];
         accessibilityText: string;
         accessibilityPriority: number;

@@ -1,5 +1,13 @@
 module txt {
 
+    export enum VerticalAlign { 
+        Top,
+        CapHeight,
+        Center,
+        BaseLine,
+        Bottom
+    };
+
     export class PathText extends createjs.Container {
     
         text:string = "";
@@ -29,6 +37,7 @@ module txt {
         flipped:boolean = false;
         fit:PathFit = txt.PathFit.Rainbow;
         align:PathAlign = txt.PathAlign.Center;
+        valign:VerticalAlign = txt.VerticalAlign.BaseLine;
         missingGlyphs:any[] = null;
 
         //accessibility
@@ -428,9 +437,6 @@ module txt {
             for( i = 0; i < len; i++ ){
                 char = <txt.Character>this.characters[ i ];
                 pathPoint = this.pathPoints.getPathPoint( char.hPosition , hPosition , char._glyph.offset * char.size );
-                char.x = pathPoint.x;
-                char.y = pathPoint.y;
-
                 //correct rotation around linesegments
                 if( nextRotation == true ){
                     this.characters[ i-1 ].parent.rotation = pathPoint.rotation;
@@ -441,23 +447,57 @@ module txt {
                 }
                 
                 char.rotation = pathPoint.rotation;
+                //Baseline
+                if( this.valign == txt.VerticalAlign.BaseLine ){
+                    char.x = pathPoint.x;
+                    char.y = pathPoint.y;
 
-                //reparent child into offset container
-                if( pathPoint.offsetX ){
+                    //reparent child into offset container
+                    if( pathPoint.offsetX ){
+                        var offsetChild = new createjs.Container();
+                        offsetChild.x = pathPoint.x
+                        offsetChild.y = pathPoint.y
+                        offsetChild.rotation = pathPoint.rotation;
+                        char.parent.removeChild( char );
+                        offsetChild.addChild( char );
+                        char.x = pathPoint.offsetX;
+                        char.y = 0;
+                        char.rotation = 0;
+                        this.addChild( offsetChild );
+                    }else{
+                        char.x = pathPoint.x;
+                        char.y = pathPoint.y;
+                        char.rotation = pathPoint.rotation;
+                    
+                    }
+
+                }else{
                     var offsetChild = new createjs.Container();
                     offsetChild.x = pathPoint.x
                     offsetChild.y = pathPoint.y
                     offsetChild.rotation = pathPoint.rotation;
                     char.parent.removeChild( char );
                     offsetChild.addChild( char );
-                    char.x = pathPoint.offsetX;
-                    char.y = 0;
+                    char.x = 0;
+                    
+                    //vertical alignment
+                    if( this.valign == txt.VerticalAlign.Top ){
+                        char.y = char.size;
+
+                    }else if( this.valign == txt.VerticalAlign.Bottom ){
+                        char.y = char._font.descent / char._font.units * char.size;
+
+                    }else if( this.valign == txt.VerticalAlign.CapHeight ){
+                        char.y = char._font[ 'cap-height' ] / char._font.units * char.size;
+
+                    }else if( this.valign == txt.VerticalAlign.Center ){
+                        char.y = char._font[ 'cap-height' ] / char._font.units * char.size / 2;
+
+                    }else{
+                        char.y = 0;
+                    }
                     char.rotation = 0;
                     this.addChild( offsetChild );
-                }else{
-                    char.x = pathPoint.x;
-                    char.y = pathPoint.y;
-                    char.rotation = pathPoint.rotation;
                 
                 }
             }
