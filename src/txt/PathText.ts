@@ -5,7 +5,10 @@ module txt {
         CapHeight,
         Center,
         BaseLine,
-        Bottom
+        Bottom,
+        XHeight,
+        Ascent,
+        Percent
     };
 
     export class PathText extends createjs.Container {
@@ -39,6 +42,8 @@ module txt {
         align:PathAlign = txt.PathAlign.Center;
         valign:VerticalAlign = txt.VerticalAlign.BaseLine;
         missingGlyphs:any[] = null;
+        renderCycle:boolean = true;
+        valignPercent:number = 1;
 
         //accessibility
         accessibilityText:string = null;
@@ -184,6 +189,11 @@ module txt {
                     this.removeAllChildren();
                     return;
                 }
+            }
+
+            if( this.renderCycle === false ){
+                this.removeAllChildren();
+                return;
             }
             
             if( this.characterLayout() === false ){
@@ -490,8 +500,17 @@ module txt {
                     }else if( this.valign == txt.VerticalAlign.CapHeight ){
                         char.y = char._font[ 'cap-height' ] / char._font.units * char.size;
 
+                    }else if( this.valign == txt.VerticalAlign.XHeight ){
+                        char.y = char._font[ 'x-height' ] / char._font.units * char.size;
+
+                    }else if( this.valign == txt.VerticalAlign.Ascent ){
+                        char.y = char._font.ascent / char._font.units * char.size;
+
                     }else if( this.valign == txt.VerticalAlign.Center ){
                         char.y = char._font[ 'cap-height' ] / char._font.units * char.size / 2;
+
+                    }else if( this.valign == txt.VerticalAlign.Percent ){
+                        char.y = this.valignPercent * char.size;
 
                     }else{
                         char.y = 0;

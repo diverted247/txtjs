@@ -60,6 +60,7 @@ declare module txt {
         lines: Line[];
         block: createjs.Container;
         missingGlyphs: any[];
+        renderCycle: boolean;
         accessibilityText: string;
         accessibilityPriority: number;
         accessibilityId: number;
@@ -139,6 +140,8 @@ declare module txt {
 declare module txt {
     class FontLoader {
         static path: string;
+        static cache: boolean;
+        static version: number;
         static fonts: any;
         static loaders: any;
         static isLoaded(name: string): boolean;
@@ -241,6 +244,7 @@ declare module txt {
         lines: Line[];
         block: createjs.Container;
         missingGlyphs: any[];
+        renderCycle: boolean;
         accessibilityText: string;
         accessibilityPriority: number;
         accessibilityId: number;
@@ -265,6 +269,9 @@ declare module txt {
         Center = 2,
         BaseLine = 3,
         Bottom = 4,
+        XHeight = 5,
+        Ascent = 6,
+        Percent = 7,
     }
     class PathText extends createjs.Container {
         text: string;
@@ -296,6 +303,8 @@ declare module txt {
         align: PathAlign;
         valign: VerticalAlign;
         missingGlyphs: any[];
+        renderCycle: boolean;
+        valignPercent: number;
         accessibilityText: string;
         accessibilityPriority: number;
         accessibilityId: number;

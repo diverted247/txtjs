@@ -84,6 +84,7 @@ var txt;
             this.words = [];
             this.lines = [];
             this.missingGlyphs = null;
+            this.renderCycle = true;
             this.accessibilityText = null;
             this.accessibilityPriority = 2;
             this.accessibilityId = null;
@@ -162,6 +163,11 @@ var txt;
             }
             if (this.characterLayout() === false) {
                 this.removeAllChildren();
+                return;
+            }
+            if (this.renderCycle === false) {
+                this.removeAllChildren();
+                this.complete();
                 return;
             }
             this.wordLayout();
@@ -695,8 +701,23 @@ var txt;
                 var font = txt.FontLoader.fonts[fontName] = new txt.Font();
                 font.targets.push(loader._id);
                 var req = new XMLHttpRequest();
+                if (localStorage && txt.FontLoader.cache) {
+                    var local = JSON.parse(localStorage.getItem('txt_font_' + fontName.split(' ').join('_')));
+                    if (local != null) {
+                        if (local.version === txt.FontLoader.version) {
+                            req.cacheResponseText = local.font;
+                            req.cacheFont = true;
+                        }
+                    }
+                }
                 req.onload = function () {
+                    if (localStorage && txt.FontLoader.cache && this.cacheFont == undefined) {
+                        localStorage.setItem('txt_font_' + fontName.split(' ').join('_'), JSON.stringify({ font: this.responseText, version: txt.FontLoader.version }));
+                    }
                     var lines = this.responseText.split('\n');
+                    if (this.cacheResponseText) {
+                        lines = this.cacheResponseText.split('\n');
+                    }
                     var len = lines.length;
                     var i = 0;
                     var line;
@@ -774,11 +795,18 @@ var txt;
                     }
                     font.targets = [];
                 };
-                req.open("get", txt.FontLoader.path + fontName.split(" ").join('_') + '.txt', true);
-                req.send();
+                if (req.cacheFont == true) {
+                    req.onload();
+                }
+                else {
+                    req.open("get", txt.FontLoader.path + fontName.split(" ").join('_') + '.txt', true);
+                    req.send();
+                }
             }
         };
         FontLoader.path = "/font/";
+        FontLoader.cache = false;
+        FontLoader.version = 0;
         FontLoader.fonts = {};
         FontLoader.loaders = [];
         return FontLoader;
@@ -1262,6 +1290,7 @@ var txt;
             this.original = null;
             this.lines = [];
             this.missingGlyphs = null;
+            this.renderCycle = true;
             this.accessibilityText = null;
             this.accessibilityPriority = 2;
             this.accessibilityId = null;
@@ -1352,6 +1381,10 @@ var txt;
             }
             if (this.singleLine === true && (this.autoExpand === true || this.autoReduce === true)) {
                 this.measure();
+            }
+            if (this.renderCycle === false) {
+                this.removeAllChildren();
+                return;
             }
             if (this.characterLayout() === false) {
                 this.removeAllChildren();
@@ -1747,6 +1780,9 @@ var txt;
         VerticalAlign[VerticalAlign["Center"] = 2] = "Center";
         VerticalAlign[VerticalAlign["BaseLine"] = 3] = "BaseLine";
         VerticalAlign[VerticalAlign["Bottom"] = 4] = "Bottom";
+        VerticalAlign[VerticalAlign["XHeight"] = 5] = "XHeight";
+        VerticalAlign[VerticalAlign["Ascent"] = 6] = "Ascent";
+        VerticalAlign[VerticalAlign["Percent"] = 7] = "Percent";
     })(txt.VerticalAlign || (txt.VerticalAlign = {}));
     var VerticalAlign = txt.VerticalAlign;
     ;
@@ -1782,6 +1818,8 @@ var txt;
             this.align = 0 /* Center */;
             this.valign = 3 /* BaseLine */;
             this.missingGlyphs = null;
+            this.renderCycle = true;
+            this.valignPercent = 1;
             this.accessibilityText = null;
             this.accessibilityPriority = 2;
             this.accessibilityId = null;
@@ -1901,6 +1939,10 @@ var txt;
                     this.removeAllChildren();
                     return;
                 }
+            }
+            if (this.renderCycle === false) {
+                this.removeAllChildren();
+                return;
             }
             if (this.characterLayout() === false) {
                 this.removeAllChildren();
@@ -2137,8 +2179,17 @@ var txt;
                     else if (this.valign == 1 /* CapHeight */) {
                         char.y = char._font['cap-height'] / char._font.units * char.size;
                     }
+                    else if (this.valign == 5 /* XHeight */) {
+                        char.y = char._font['x-height'] / char._font.units * char.size;
+                    }
+                    else if (this.valign == 6 /* Ascent */) {
+                        char.y = char._font.ascent / char._font.units * char.size;
+                    }
                     else if (this.valign == 2 /* Center */) {
                         char.y = char._font['cap-height'] / char._font.units * char.size / 2;
+                    }
+                    else if (this.valign == 7 /* Percent */) {
+                        char.y = this.valignPercent * char.size;
                     }
                     else {
                         char.y = 0;

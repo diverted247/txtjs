@@ -76,7 +76,25 @@
             font:'lobster',
             start:2500,
             align:txt.PathAlign.Center,
-            valign:txt.VerticalAlign.Center,
+            valign:txt.VerticalAlign.Percent,
+            valignPercent:.0001,
+            size:200,
+            tracking:0,
+            rotation:270,
+            path:circle( 0 , 0 , 400 ),
+            debug:true
+        }));
+
+        stage.addChild( new txt.PathText({
+            x:500,
+            y:500,
+            flipped:false,
+            text:'Victory',
+            fillColor:'#111',
+            font:'lobster',
+            start:2500,
+            align:txt.PathAlign.Center,
+            valign:txt.VerticalAlign.XHeight,
             size:200,
             tracking:0,
             rotation:270,

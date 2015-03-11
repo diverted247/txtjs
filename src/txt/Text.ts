@@ -22,6 +22,7 @@ module txt {
         lines:Line[] = [];
         block:createjs.Container;
         missingGlyphs:any[] = null;
+        renderCycle:boolean = true;
 
         //accessibility
         accessibilityText:string = null;
@@ -127,6 +128,13 @@ module txt {
                 this.removeAllChildren();
                 return;
             }
+
+            if( this.renderCycle === false ){
+                this.removeAllChildren();
+                this.complete();
+                return;
+            }
+            
             this.wordLayout();
             this.lineLayout();
             

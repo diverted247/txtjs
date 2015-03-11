@@ -4,6 +4,10 @@ module txt {
 
         static path:string = "/font/";
 
+        static cache:boolean = false;
+
+        static version:number = 0;
+
         static fonts:any = {};
 
         static loaders:any = [];
@@ -77,9 +81,32 @@ module txt {
             }else{
                 var font:txt.Font = txt.FontLoader.fonts[ fontName ] = new txt.Font()
                 font.targets.push( loader._id );
-                var req = new XMLHttpRequest();
+
+                //TODO localstorage check & get
+                var req:any = new XMLHttpRequest();
+
+                if( localStorage && txt.FontLoader.cache ){
+                    var local = JSON.parse( localStorage.getItem( 'txt_font_' + fontName.split(' ').join('_') ) );
+                    if( local != null ){
+                        if( local.version === txt.FontLoader.version ){
+                            req.cacheResponseText = local.font;
+                            req.cacheFont = true;
+                        }
+                    }
+                }
+
                 req.onload = function(){
+                    
+                    //localstorage set
+                    if( localStorage && txt.FontLoader.cache && this.cacheFont == undefined ){
+                        localStorage.setItem( 'txt_font_' + fontName.split(' ').join('_') , JSON.stringify( { font:this.responseText, version:txt.FontLoader.version } ) );
+                    }
+
                     var lines = this.responseText.split( '\n' );
+                    //use cacheResponseText as responseText is readonly via XHR
+                    if( this.cacheResponseText ){
+                        lines = this.cacheResponseText.split( '\n' );
+                    }
                     var len = lines.length;
                     var i = 0;
                     var line:string[];
@@ -173,8 +200,13 @@ module txt {
                     }
                     font.targets = [];
                 }
-                req.open( "get" , txt.FontLoader.path + fontName.split( " " ).join( '_' ) + '.txt' , true );
-                req.send();
+                //check if cached
+                if( req.cacheFont == true ){
+                    req.onload();
+                }else{
+                    req.open( "get" , txt.FontLoader.path + fontName.split( " " ).join( '_' ) + '.txt' , true );
+                    req.send();
+                }
             }
         }
     }
