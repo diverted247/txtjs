@@ -1291,6 +1291,8 @@ var txt;
             this.lines = [];
             this.missingGlyphs = null;
             this.renderCycle = true;
+            this.measured = false;
+            this.oversetPotential = false;
             this.accessibilityText = null;
             this.accessibilityPriority = 2;
             this.accessibilityId = null;
@@ -1326,6 +1328,8 @@ var txt;
         CharacterText.prototype.layout = function () {
             txt.Accessibility.set(this);
             this.overset = false;
+            this.measured = false;
+            this.oversetPotential = false;
             if (this.original.size) {
                 this.size = this.original.size;
             }
@@ -1384,6 +1388,7 @@ var txt;
             }
             if (this.renderCycle === false) {
                 this.removeAllChildren();
+                this.complete();
                 return;
             }
             if (this.characterLayout() === false) {
@@ -1395,6 +1400,7 @@ var txt;
             this.complete();
         };
         CharacterText.prototype.measure = function () {
+            this.measured = true;
             var size = this.original.size;
             var len = this.text.length;
             var width = this.getWidth();
@@ -1464,6 +1470,7 @@ var txt;
                     this.size = this.original.size * this.width / (metricRealWidth + (space.offset * space.size));
                     if (this.minSize != null && this.size < this.minSize) {
                         this.size = this.minSize;
+                        this.oversetPotential = true;
                     }
                     return true;
                 }
@@ -1627,7 +1634,10 @@ var txt;
                         }
                     }
                 }
-                if (this.singleLine === false && hPosition + char.measuredWidth > this.width) {
+                if (this.overset == true) {
+                    break;
+                }
+                else if (this.singleLine === false && hPosition + char.measuredWidth > this.width) {
                     var lastchar = currentLine.children[currentLine.children.length - 1];
                     if (lastchar.characterCode == 32) {
                         currentLine.measuredWidth = hPosition - lastchar.measuredWidth - lastchar.trackingOffset() - lastchar._glyph.getKerning(this.getCharCodeAt(i), lastchar.size);
@@ -1658,14 +1668,13 @@ var txt;
                     this.block.addChild(currentLine);
                     vPosition = 0;
                 }
-                else if (this.singleLine === true && hPosition + char.measuredWidth > this.width) {
-                    if (this.overset == false) {
-                        char.x = hPosition;
-                        currentLine.addChild(char);
-                        this.oversetIndex = i;
-                        this.overset = true;
-                    }
-                    break;
+                else if (this.measured == true && this.singleLine === true && hPosition + char.measuredWidth > this.width && this.oversetPotential == true) {
+                    this.oversetIndex = i;
+                    this.overset = true;
+                }
+                else if (this.measured == false && this.singleLine === true && hPosition + char.measuredWidth > this.width) {
+                    this.oversetIndex = i;
+                    this.overset = true;
                 }
                 else {
                     char.x = hPosition;
@@ -1820,6 +1829,10 @@ var txt;
             this.missingGlyphs = null;
             this.renderCycle = true;
             this.valignPercent = 1;
+            this.initialTracking = 0;
+            this.initialOffset = 0;
+            this.measured = false;
+            this.oversetPotential = false;
             this.accessibilityText = null;
             this.accessibilityPriority = 2;
             this.accessibilityId = null;
@@ -1845,6 +1858,8 @@ var txt;
             }
             this.pathPoints = new txt.Path(this.path, this.start, this.end, this.flipped, this.fit, this.align);
         }
+        PathText.prototype.complete = function () {
+        };
         PathText.prototype.setPath = function (path) {
             this.path = path;
             this.pathPoints.path = this.path;
@@ -1888,9 +1903,13 @@ var txt;
         };
         PathText.prototype.layout = function () {
             txt.Accessibility.set(this);
+            this.overset = false;
+            this.oversetIndex = null;
             this.removeAllChildren();
             this.characters = [];
             this.missingGlyphs = null;
+            this.measured = false;
+            this.oversetPotential = false;
             if (this.debug == true) {
                 var s = new createjs.Shape();
                 s.graphics.beginStroke("#FF0000");
@@ -1942,6 +1961,7 @@ var txt;
             }
             if (this.renderCycle === false) {
                 this.removeAllChildren();
+                this.complete();
                 return;
             }
             if (this.characterLayout() === false) {
@@ -1949,8 +1969,10 @@ var txt;
                 return;
             }
             this.render();
+            this.complete();
         };
         PathText.prototype.measure = function () {
+            this.measured = true;
             var size = this.original.size;
             var len = this.text.length;
             var width = this.getWidth();
@@ -2020,6 +2042,12 @@ var txt;
                     this.size = this.original.size * width / (metricRealWidth + (space.offset * space.size));
                     if (this.minSize != null && this.size < this.minSize) {
                         this.size = this.minSize;
+                        if (this.renderCycle === false) {
+                            this.overset = true;
+                        }
+                        else {
+                            this.oversetPotential = true;
+                        }
                     }
                     return true;
                 }
@@ -2094,6 +2122,9 @@ var txt;
                     txt.FontLoader.load(this, [currentStyle.font]);
                     return false;
                 }
+                if (hPosition == 0) {
+                    hPosition = this.initialOffset + this.trackingOffset(this.initialTracking, currentStyle.size, txt.FontLoader.getFont(currentStyle.font).units);
+                }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
                 if (char.missing) {
                     if (this.missingGlyphs == null) {
@@ -2122,9 +2153,24 @@ var txt;
                         }
                     }
                 }
-                char.hPosition = hPosition;
-                this.characters.push(char);
-                this.block.addChild(char);
+                if (this.overset == true) {
+                    break;
+                }
+                else if (this.measured == true && hPosition + char.measuredWidth > this.getWidth() && this.oversetPotential == true) {
+                    this.oversetIndex = i;
+                    this.overset = true;
+                    break;
+                }
+                else if (this.measured == false && hPosition + char.measuredWidth > this.getWidth()) {
+                    this.oversetIndex = i;
+                    this.overset = true;
+                    break;
+                }
+                else {
+                    char.hPosition = hPosition;
+                    this.characters.push(char);
+                    this.block.addChild(char);
+                }
                 hPosition = hPosition + (char._glyph.offset * char.size) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning(this.getCharCodeAt(i + 1), char.size);
             }
             len = this.characters.length;

@@ -51,16 +51,16 @@
         
         stage.addChild( new txt.PathText({
             x:500,
-            y:500,
-            flipped:true,
-            text:'Flipped Path Alignment',
+            y:600,
+            flipped:false,
+            text:'Path Alignment',
             fillColor:'#111',
             font:'lobster',
             start:2500,
             end:0,
             align:txt.PathAlign.Center,
             valign:txt.VerticalAlign.Center,
-            size:200,
+            size:150,
             tracking:0,
             rotation:270,
             path:circle( 0 , 0 , 400 ),
@@ -69,7 +69,7 @@
 
         stage.addChild( new txt.PathText({
             x:500,
-            y:500,
+            y:600,
             flipped:false,
             text:'Victory',
             fillColor:'#111',
@@ -77,24 +77,7 @@
             start:2500,
             align:txt.PathAlign.Center,
             valign:txt.VerticalAlign.Percent,
-            valignPercent:.0001,
-            size:200,
-            tracking:0,
-            rotation:270,
-            path:circle( 0 , 0 , 400 ),
-            debug:true
-        }));
-
-        stage.addChild( new txt.PathText({
-            x:500,
-            y:500,
-            flipped:false,
-            text:'Victory',
-            fillColor:'#111',
-            font:'lobster',
-            start:2500,
-            align:txt.PathAlign.Center,
-            valign:txt.VerticalAlign.XHeight,
+            valignPercent:.001,
             size:200,
             tracking:0,
             rotation:270,

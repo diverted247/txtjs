@@ -26,7 +26,7 @@ module txt {
 
         static update(){
             txt.Accessibility.timeout = null;
-            var data = txt.Accessibility.data.slice(0)
+            var data = txt.Accessibility.data.slice( 0 )
             data.sort( function(a,b){ return a.accessibilityPriority - b.accessibilityPriority } );
             var len = data.length;
             var out = "";

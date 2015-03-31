@@ -173,8 +173,8 @@ module txt {
             // place into words
             for( var i = 0; i < len; i++ ){
                 
-                if( this.style !== null && this.style[i] !== undefined ){
-                    currentStyle = this.style[i];
+                if( this.style !== null && this.style[ i ] !== undefined ){
+                    currentStyle = this.style[ i ];
                     // make sure style contains properties needed.
                     if( currentStyle.size === undefined ) currentStyle.size = defaultStyle.size;
                     if( currentStyle.font === undefined ) currentStyle.font = defaultStyle.font;
@@ -399,7 +399,7 @@ module txt {
                         lastHeight = currentLine.y + vPosition;
                     }
                     currentLine.measuredWidth = hPosition;
-                    lastLineWord = this.words[i - 1];
+                    lastLineWord = this.words[ i - 1 ];
                     if( lastLineWord != undefined && lastLineWord.hasSpace ){
                         currentLine.measuredWidth -= lastLineWord.spaceOffset;
                     }

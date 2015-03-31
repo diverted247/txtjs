@@ -30,6 +30,8 @@ module txt {
         block:createjs.Container;
         missingGlyphs:any[] = null;
         renderCycle:boolean = true;
+        measured:boolean = false;
+        oversetPotential:boolean = false;
 
         //accessibility
         accessibilityText:string = null;
@@ -82,6 +84,9 @@ module txt {
             txt.Accessibility.set( this );
 
             this.overset = false;
+            this.measured = false;
+            this.oversetPotential = false;
+
             if( this.original.size ){
                 this.size = this.original.size;
             }
@@ -156,6 +161,7 @@ module txt {
 
             if( this.renderCycle === false ){
                 this.removeAllChildren();
+                this.complete();
                 return;
             }
 
@@ -170,6 +176,7 @@ module txt {
 
         measure():boolean{
 
+            this.measured = true;
             //Extract orgin sizing from this.original to preserve
             //metrics. autoMeasure will change style properties
             //directly. Change this.original to rerender.
@@ -218,7 +225,7 @@ module txt {
                     units: font.units,
                     tracking: this.trackingOffset( currentStyle.tracking , currentStyle.size , font.units ),
                     kerning: font.glyphs[charCode].getKerning( this.getCharCodeAt( i + 1 ) , 1 )
-                });
+                } );
                 //console.log( this.text[i] );
             }
 
@@ -250,21 +257,13 @@ module txt {
             //console.log( " len: " + len );
             //console.log( "LOOPMETRICS===============" );
             for( var i = 0; i < len; i++ ){
-                current = charMetrics[i];
+                current = charMetrics[ i ];
                 metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
                 metricRealWidth = metricRealWidth + ( ( current.offset + current.kerning ) * current.size );
                 metricRealWidthTracking = metricRealWidthTracking + 
                     ( ( current.offset + current.kerning + current.tracking ) * current.size );
                 //console.log( current.char );
             }
-            //console.log( "METRICS===============" );
-            //console.log( "mbw:  " + metricBaseWidth );
-            //console.log( "mrw:  " + metricRealWidth );
-            //console.log( "mrwt: " + metricRealWidthTracking );
-            //console.log( "widt: " + this.width );
-            //console.log( " len: " + len );
-            //console.log( charMetrics );
-            //console.log( "======================" );
             
             //size cases
             if( metricRealWidth > this.width ){
@@ -273,6 +272,7 @@ module txt {
                     this.size = this.original.size * this.width / ( metricRealWidth + ( space.offset * space.size ) );
                     if( this.minSize != null && this.size < this.minSize ){
                         this.size = this.minSize;
+                        this.oversetPotential = true;
                     }
                     //console.log( "REDUCE SIZE")
                     return true;
@@ -470,7 +470,9 @@ module txt {
                     }
                 }
 
-                if( this.singleLine === false && hPosition + char.measuredWidth > this.width  ){
+                if( this.overset == true ){
+                    break;
+                }else if( this.singleLine === false && hPosition + char.measuredWidth > this.width  ){
                     var lastchar:Character = <txt.Character>currentLine.children[ currentLine.children.length - 1 ];
                     if( lastchar.characterCode == 32 ){
                         currentLine.measuredWidth = hPosition - lastchar.measuredWidth - lastchar.trackingOffset() - lastchar._glyph.getKerning( this.getCharCodeAt( i ) , lastchar.size );
@@ -499,14 +501,23 @@ module txt {
                     this.lines.push( currentLine );
                     this.block.addChild( currentLine );
                     vPosition = 0;
-                }else if( this.singleLine === true && hPosition + char.measuredWidth > this.width  ){
-                    if( this.overset == false ){
-                        char.x = hPosition;
-                        currentLine.addChild( char );
-                        this.oversetIndex = i;
-                        this.overset = true;
-                    }
-                    break;
+
+                //measured case
+                }else if( this.measured == true && this.singleLine === true && hPosition + char.measuredWidth > this.width && this.oversetPotential == true ){
+                    
+                    //char.x = hPosition;
+                    //currentLine.addChild( char );
+                    this.oversetIndex = i;
+                    this.overset = true;
+                    //hPosition = char.x + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning( this.getCharCodeAt( i + 1 ) , char.size );
+                    
+                //not measured
+                }else if( this.measured == false && this.singleLine === true && hPosition + char.measuredWidth > this.width  ){
+                    //char.x = hPosition;
+                    //currentLine.addChild( char );
+                    this.oversetIndex = i;
+                    this.overset = true;
+                    //hPosition = char.x + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning( this.getCharCodeAt( i + 1 ) , char.size );
                     
                 }else{
                     char.x = hPosition;

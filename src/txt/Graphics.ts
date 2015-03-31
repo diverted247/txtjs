@@ -254,7 +254,7 @@ module txt {
                             cpx = p.shift();
                             cpy = p.shift();
                             cmd = 'A';
-                            points = [  [ x1 , y1 ] , rx , ry , psi , fa , fs , [ cpx , cpy ] ];
+                            points = [ [ x1 , y1 ] , rx , ry , psi , fa , fs , [ cpx , cpy ] ];
                             break;
 
                         case 'a':
@@ -268,7 +268,7 @@ module txt {
                             cpx += p.shift();
                             cpy += p.shift();
                             cmd = 'A';
-                            points = [  [ x1 , y1 ] , rx , ry , psi , fa , fs , [ cpx , cpy ] ];
+                            points = [ [ x1 , y1 ] , rx , ry , psi , fa , fs , [ cpx , cpy ] ];
                             break;
 
                         case 'z':

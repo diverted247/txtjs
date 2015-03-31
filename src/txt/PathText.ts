@@ -44,6 +44,11 @@ module txt {
         missingGlyphs:any[] = null;
         renderCycle:boolean = true;
         valignPercent:number = 1;
+        initialTracking:number = 0;
+        initialOffset:number = 0;
+        measured:boolean = false;
+        oversetPotential:boolean = false;
+
 
         //accessibility
         accessibilityText:string = null;
@@ -76,6 +81,8 @@ module txt {
             this.pathPoints = new txt.Path( this.path , this.start , this.end , this.flipped , this.fit , this.align );
             //console.log( this );
         }
+
+        complete(){}
 
         setPath( path:string ){
             this.path = path;
@@ -129,10 +136,13 @@ module txt {
 
             //accessibility api
             txt.Accessibility.set( this );
-            
+            this.overset = false;
+            this.oversetIndex = null;
             this.removeAllChildren();
             this.characters = [];
             this.missingGlyphs = null;
+            this.measured = false;
+            this.oversetPotential = false;
             if( this.debug == true ){
 
                 var s = new createjs.Shape();
@@ -193,6 +203,7 @@ module txt {
 
             if( this.renderCycle === false ){
                 this.removeAllChildren();
+                this.complete();
                 return;
             }
             
@@ -201,10 +212,12 @@ module txt {
                 return;
             }
             this.render();
+            this.complete();
         }
 
         measure():boolean{
-
+            
+            this.measured = true;
             //Extract orgin sizing from this.original to preserve
             //metrics. autoMeasure will change style properties
             //directly. Change this.original to rerender.
@@ -245,14 +258,14 @@ module txt {
                 //console.log( currentStyle.tracking , font.units );
                 
                 charMetrics.push( {
-                    char: this.text[i],
+                    char: this.text[ i ],
                     size: currentStyle.size,
                     charCode:charCode,
                     font: currentStyle.font,
-                    offset: font.glyphs[charCode].offset,
+                    offset: font.glyphs[ charCode ].offset,
                     units: font.units,
                     tracking: this.trackingOffset( currentStyle.tracking , currentStyle.size , font.units ),
-                    kerning: font.glyphs[charCode].getKerning( this.getCharCodeAt( i + 1 ) , 1 )
+                    kerning: font.glyphs[ charCode ].getKerning( this.getCharCodeAt( i + 1 ) , 1 )
                 });
                 //console.log( this.text[i] );
             }
@@ -263,13 +276,13 @@ module txt {
                 size: currentStyle.size,
                 charCode: 32,
                 font: currentStyle.font,
-                offset: font.glyphs[32].offset,
+                offset: font.glyphs[ 32 ].offset,
                 units: font.units,
                 tracking: 0,
                 kerning: 0
             };
 
-            charMetrics[ charMetrics.length-1 ].tracking=0;
+            charMetrics[ charMetrics.length - 1 ].tracking=0;
             //charMetrics[ charMetrics.length-1 ].kerning=0;
             
             len = charMetrics.length;
@@ -285,7 +298,7 @@ module txt {
             //console.log( " len: " + len );
             //console.log( "LOOPMETRICS===============" );
             for( var i = 0; i < len; i++ ){
-                current = charMetrics[i];
+                current = charMetrics[ i ];
                 metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
                 metricRealWidth = metricRealWidth + ( ( current.offset + current.kerning ) * current.size );
                 metricRealWidthTracking = metricRealWidthTracking + 
@@ -296,7 +309,7 @@ module txt {
             //console.log( "mbw:  " + metricBaseWidth );
             //console.log( "mrw:  " + metricRealWidth );
             //console.log( "mrwt: " + metricRealWidthTracking );
-            //console.log( "widt: " + this.width );
+            //console.log( "widt4: " + this.getWidth() );
             //console.log( " len: " + len );
             //console.log( charMetrics );
             //console.log( "======================" );
@@ -308,6 +321,11 @@ module txt {
                     this.size = this.original.size * width / ( metricRealWidth + ( space.offset * space.size ) );
                     if( this.minSize != null && this.size < this.minSize ){
                         this.size = this.minSize;
+                        if( this.renderCycle === false ){
+                            this.overset = true;
+                        }else{
+                            this.oversetPotential = true;
+                        }
                     }
                     //console.log( "REDUCE SIZE")
                     return true;
@@ -392,6 +410,11 @@ module txt {
                     return false;
                 }
 
+                //initalize with initialTracking and initialOffset;
+                if( hPosition == 0 ){
+                    hPosition = this.initialOffset + this.trackingOffset( this.initialTracking , currentStyle.size , txt.FontLoader.getFont( currentStyle.font ).units );
+                }
+
                 // create character
                 char = new Character( this.text.charAt( i ) , currentStyle , i );
                 if( char.missing ){
@@ -430,23 +453,55 @@ module txt {
                     }
                 }
 
-                char.hPosition = hPosition;
+                //char.hPosition = hPosition;
 
                 // push character into block
-                this.characters.push( char );
-                this.block.addChild( char );
+                //this.characters.push( char );
+                //this.block.addChild( char );
+
+                if( this.overset == true ){
+                    break;
+                }else if( this.measured == true && hPosition + char.measuredWidth > this.getWidth() && this.oversetPotential == true ){
+                    //char.hPosition = hPosition;
+                    //this.characters.push( char );
+                    //this.block.addChild( char );
+                    
+                    //this.block.removeChild(this.characters.pop() );
+                    this.oversetIndex = i;
+                    this.overset = true;
+                    break;
+
+                }else if( this.measured == false && hPosition + char.measuredWidth > this.getWidth() ){
+                    //char.hPosition = hPosition;
+                    //this.characters.push( char );
+                    //this.block.addChild( char );
+                    
+                    //this.block.removeChild(this.characters.pop() );
+                    this.oversetIndex = i;
+                    this.overset = true;
+                    break;
+                    
+                }else{
+                    char.hPosition = hPosition;
+                    this.characters.push( char );
+                    this.block.addChild( char );
+                }
 
                 //char.x = hPosition;
                 hPosition = hPosition + ( char._glyph.offset * char.size ) + char.characterCaseOffset + char.trackingOffset() + char._glyph.getKerning( this.getCharCodeAt( i + 1 ) , char.size );
 
             }
 
+
+
             len = this.characters.length;
             var pathPoint:any;
             var nextRotation = false;
             for( i = 0; i < len; i++ ){
                 char = <txt.Character>this.characters[ i ];
+                //console.log( this.getWidth() );
                 pathPoint = this.pathPoints.getPathPoint( char.hPosition , hPosition , char._glyph.offset * char.size );
+                //console.log( pathPoint )
                 //correct rotation around linesegments
                 if( nextRotation == true ){
                     this.characters[ i-1 ].parent.rotation = pathPoint.rotation;
@@ -457,6 +512,7 @@ module txt {
                 }
                 
                 char.rotation = pathPoint.rotation;
+                
                 //Baseline
                 if( this.valign == txt.VerticalAlign.BaseLine ){
                     char.x = pathPoint.x;

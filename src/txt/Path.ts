@@ -33,7 +33,7 @@ module txt {
         closed:boolean = false;
         clockwise:boolean = true;
 
-        constructor( path:string, start:number=0, end:number=null, flipped:boolean=false, fit:PathFit=txt.PathFit.Rainbow , align:PathAlign = txt.PathAlign.Center ){
+        constructor( path:string , start:number=0 , end:number=null , flipped:boolean=false , fit:PathFit=txt.PathFit.Rainbow , align:PathAlign = txt.PathAlign.Center ){
             this.path = path;
             this.start = start;
             this.align = align;
@@ -79,18 +79,18 @@ module txt {
                 if( this.flipped == false ){
                     if( this.start > this.end ){
                         this.realLength = this.start - this.end;
-                        this.center = this.start - this.realLength/2;
+                        this.center = this.start - this.realLength / 2;
                     }else{
                         this.realLength = this.end - this.start;
-                        this.center = this.start + this.realLength/2;
+                        this.center = this.start + this.realLength / 2;
                     }
                 }else{
                     if( this.start > this.end ){
                         this.realLength = this.start - this.end;
-                        this.center = this.start - this.realLength/2;
+                        this.center = this.start - this.realLength / 2;
                     }else{
                         this.realLength = this.end - this.start;
-                        this.center = this.start + this.realLength/2;
+                        this.center = this.start + this.realLength / 2;
                     }
                 }
 
@@ -98,10 +98,10 @@ module txt {
                 if( this.flipped == false ){
                     if( this.start > this.end ){
                         this.realLength = this.start - this.end;
-                        this.center = this.end + this.realLength/2;
+                        this.center = this.end + this.realLength / 2;
                     }else{
                         this.realLength = ( this.start + this.length - this.end );
-                        this.center = this.end + this.realLength/2;
+                        this.center = this.end + this.realLength / 2;
                         if( this.center > this.length ){
                             this.center = this.center - this.length;
                         }
@@ -109,34 +109,34 @@ module txt {
                 }else{
                     if( this.start > this.end ){
                         this.realLength = ( this.end + this.length - this.start );
-                        this.center = this.start + this.realLength/2;
+                        this.center = this.start + this.realLength / 2;
                         if( this.center > this.length ){
                             this.center = this.center - this.length;
                         }
                     }else{
                         this.realLength = this.end - this.start;
-                        this.center = this.start + this.realLength/2;
+                        this.center = this.start + this.realLength / 2;
                     }
                 }
             }else{
                 if( this.flipped == false ){
                     if( this.start > this.end ){
                         this.realLength = this.end + this.length - this.start;
-                        this.center = this.start + this.realLength/2;
+                        this.center = this.start + this.realLength / 2;
                         if( this.center > this.length ){
                             this.center = this.center - this.length;
                         }
                     }else{
                         this.realLength = this.end - this.start;
-                        this.center = this.start + this.realLength/2;
+                        this.center = this.start + this.realLength / 2;
                     }
                 }else{
                     if( this.start > this.end ){
                         this.realLength = this.start - this.end;
-                        this.center = this.end + this.realLength/2;
+                        this.center = this.end + this.realLength / 2;
                     }else{
                         this.realLength = this.start + this.length - this.end;
-                        this.center = this.end + this.realLength/2;
+                        this.center = this.end + this.realLength / 2;
                         if( this.center > this.length ){
                             this.center = this.center - this.length;
                         }
@@ -177,7 +177,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start - ( this.realLength - characterLength )/2;
+                            realStart = this.start - ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start - this.realLength - characterLength;
@@ -191,7 +191,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start + ( this.realLength - characterLength )/2;
+                            realStart = this.start + ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start + this.realLength - characterLength;
@@ -205,7 +205,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start - ( this.realLength - characterLength )/2;
+                            realStart = this.start - ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start - this.realLength - characterLength;
@@ -218,7 +218,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start + ( this.realLength - characterLength )/2;
+                            realStart = this.start + ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start + this.realLength - characterLength;
@@ -238,7 +238,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start - ( this.realLength - characterLength )/2;
+                            realStart = this.start - ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start - this.realLength - characterLength;
@@ -254,7 +254,7 @@ module txt {
                             position = realStart - distance;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start - ( this.realLength - characterLength )/2;
+                            realStart = this.start - ( this.realLength - characterLength ) / 2;
                             position = realStart - distance;
                         
                         }else if( this.align == PathAlign.Right ){
@@ -279,7 +279,7 @@ module txt {
                             position = realStart + distance;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start + ( this.realLength - characterLength )/2;
+                            realStart = this.start + ( this.realLength - characterLength ) / 2;
                             position = realStart + distance;
                         
                         }else if( this.align == PathAlign.Right ){
@@ -299,7 +299,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start + ( this.realLength - characterLength )/2;
+                            realStart = this.start + ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start + this.realLength - characterLength;
@@ -319,7 +319,7 @@ module txt {
                             position = realStart - distance;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start - ( this.realLength - characterLength )/2;
+                            realStart = this.start - ( this.realLength - characterLength ) / 2;
                             position = realStart - distance;
                         
                         }else if( this.align == PathAlign.Right ){
@@ -338,7 +338,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start - ( this.realLength - characterLength )/2;
+                            realStart = this.start - ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start - this.realLength - characterLength;
@@ -356,7 +356,7 @@ module txt {
                             realStart = this.start;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start + ( this.realLength - characterLength )/2;
+                            realStart = this.start + ( this.realLength - characterLength ) / 2;
                         
                         }else if( this.align == PathAlign.Right ){
                             realStart = this.start + this.realLength - characterLength;
@@ -370,7 +370,7 @@ module txt {
                             position = realStart + distance;
                         
                         }else if( this.align == PathAlign.Center ){
-                            realStart = this.start + ( this.realLength - characterLength )/2;
+                            realStart = this.start + ( this.realLength - characterLength ) / 2;
                             position = realStart + distance;
                         
                         }else if( this.align == PathAlign.Right ){
@@ -435,8 +435,10 @@ module txt {
 
             if( direction ){
                 point2 = this.getRealPathPoint( position + charOffset );
+                //console.log( direction , position + charOffset , this.realLength );
             }else{
                 point2 = this.getRealPathPoint( position - charOffset );
+                //console.log( direction , position - charOffset , this.realLength );
             }
 
             var rot12 = Math.atan( ( point2.y - point1.y ) / ( point2.x - point1.x ) ) * 180 / Math.PI;

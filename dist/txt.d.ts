@@ -245,6 +245,8 @@ declare module txt {
         block: createjs.Container;
         missingGlyphs: any[];
         renderCycle: boolean;
+        measured: boolean;
+        oversetPotential: boolean;
         accessibilityText: string;
         accessibilityPriority: number;
         accessibilityId: number;
@@ -305,10 +307,15 @@ declare module txt {
         missingGlyphs: any[];
         renderCycle: boolean;
         valignPercent: number;
+        initialTracking: number;
+        initialOffset: number;
+        measured: boolean;
+        oversetPotential: boolean;
         accessibilityText: string;
         accessibilityPriority: number;
         accessibilityId: number;
         constructor(props?: ConstructObj);
+        complete(): void;
         setPath(path: string): void;
         setStart(start: number): void;
         setEnd(end: number): void;
