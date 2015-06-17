@@ -84,7 +84,7 @@ module txt {
             this.measuredWidth = this.scaleX * this._glyph.offset * this._font.units;
             
             var ha = new createjs.Shape();
-            ha.graphics.drawRect( 0 , this._font.descent , this._glyph.offset * this._font.units , this._font.ascent - this._font.descent );
+            ha.graphics.beginFill('#000').drawRect( 0 , this._font.descent , this._glyph.offset * this._font.units , this._font.ascent - this._font.descent );
             this.hitArea = ha;
             
         }
