@@ -23,6 +23,31 @@ declare module txt {
         strokeColor?: string;
         strokeWidth?: number;
         debug?: boolean;
+        character?: ShapeEvents;
+        word?: ShapeEvents;
+        line?: ShapeEvents;
+        block?: ShapeEvents;
+    }
+    interface ShapeEvents {
+        added?: EventCallback;
+        click?: EventCallback;
+        dblclick?: EventCallback;
+        mousedown?: EventCallback;
+        mouseout?: EventCallback;
+        mouseover?: EventCallback;
+        pressmove?: EventCallback;
+        pressup?: EventCallback;
+        removed?: EventCallback;
+        rollout?: EventCallback;
+        rollover?: EventCallback;
+        tick?: EventCallback;
+    }
+    interface WordEvents {
+    }
+    interface LineEvents {
+    }
+    interface EventCallback {
+        (value: any): void;
     }
     interface Point {
         x: number;
@@ -56,6 +81,7 @@ declare module txt {
         loaderId: number;
         style: Style[];
         debug: boolean;
+        original: ConstructObj;
         words: Word[];
         lines: Line[];
         block: createjs.Container;

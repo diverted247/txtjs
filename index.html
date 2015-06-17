@@ -139,6 +139,9 @@
 					<li>
 						<a href="/examples/Text/text_change_font.html">Event - Swap fonts</a>
 					</li>
+                    <li>
+						<a href="/examples/Text/child_events.html">Event - Child Events</a>
+					</li>
 				</ul>
                 
             </p>
@@ -233,6 +236,9 @@
 						<a href="/examples/CharacterText/text_change_font.html">Event - Swap fonts</a>
 					</li>
                     <li>
+						<a href="/examples/CharacterText/child_events.html">Event - Child Events</a>
+					</li>
+                    <li>
                         <a href="/examples/CharacterText/autosize_expand.html">Fit - singleLine autoExpand</a>
                     </li>
                     <li>
@@ -283,6 +289,9 @@
                     <li>
                         <a href="/examples/PathText/cache.html">Performance - Font Caching</a>
                     </li>
+                    <li>
+						<a href="/examples/PathText/child_events.html">Event - Child Events</a>
+					</li>
 				</ul>
                 
             </p>
@@ -410,7 +419,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         stage = new createjs.Stage(canvas);
         
         var text = new txt.Text( { 
-            text:'Written to <canvas> with txtjs. Welcome.\nv0.9.3',
+            text:'Written to <canvas> with txtjs. Welcome.\nv0.9.4',
             font:'raleway',
             align:txt.Align.MIDDLE_CENTER,
             tracking:-5,
@@ -420,7 +429,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             size:100,
             x:0,
             y:0,
-            accessibilityText:'Written to canvas with txtjs. Welcome. v0.9.3'
+            accessibilityText:'Written to canvas with txtjs. Welcome. v0.9.4'
         } );
         
         stage.addChild( text );

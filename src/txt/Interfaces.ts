@@ -25,6 +25,35 @@ module txt {
         strokeColor?:string;
         strokeWidth?:number;
         debug?:boolean;
+        character?:ShapeEvents;
+        word?:ShapeEvents;
+        line?:ShapeEvents;
+        block?:ShapeEvents;
+    }
+    
+    export interface ShapeEvents {
+        added?:EventCallback;
+        click?:EventCallback;
+        dblclick?:EventCallback;
+        mousedown?:EventCallback;
+        mouseout?:EventCallback;
+        mouseover?:EventCallback;
+        pressmove?:EventCallback;
+        pressup?:EventCallback;
+        removed?:EventCallback;
+        rollout?:EventCallback;
+        rollover?:EventCallback;
+        tick?:EventCallback;
+    }
+    
+    export interface WordEvents {
+    }
+    
+    export interface LineEvents {
+    }
+    
+    export interface EventCallback {
+        ( value:any ):void;
     }
 
     export interface Point {

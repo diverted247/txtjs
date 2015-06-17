@@ -420,6 +420,47 @@ module txt {
 
                 // create character
                 char = new Character( this.text.charAt( i ) , currentStyle , i );
+                
+                if( this.original.character ){
+                    if( this.original.character.added ){
+                        char.on( 'added' , this.original.character.added );
+                    }
+                    if( this.original.character.click ){
+                        char.on( 'click' , this.original.character.click );
+                    }
+                    if( this.original.character.dblclick ){
+                        char.on( 'dblclick' , this.original.character.dblclick );
+                    }
+                    if( this.original.character.mousedown ){
+                        char.on( 'mousedown' , this.original.character.mousedown );
+                    }
+                    if( this.original.character.mouseout ){
+                        char.on( 'mouseout' , this.original.character.mouseout );
+                    }
+                    if( this.original.character.mouseover ){
+                        char.on( 'mouseover' , this.original.character.mouseover );
+                    }
+                    if( this.original.character.pressmove ){
+                        char.on( 'pressmove' , this.original.character.pressmove );
+                    }
+                    if( this.original.character.pressup ){
+                        char.on( 'pressup' , this.original.character.pressup );
+                    }
+                    if( this.original.character.removed ){
+                        char.on( 'removed' , this.original.character.removed );
+                    }
+                    if( this.original.character.rollout ){
+                        char.on( 'rollout' , this.original.character.rollout );
+                    }
+                    if( this.original.character.rollover ){
+                        char.on( 'rollover' , this.original.character.rollover );
+                    }
+                    if( this.original.character.tick ){
+                        char.on( 'tick' , this.original.character.tick );
+                    }
+                }
+                
+                
                 if( char.missing ){
                     if( this.missingGlyphs == null ){
                         this.missingGlyphs = [];
@@ -596,6 +637,45 @@ module txt {
                 if( line.lastCharacter() ){
                     line.measuredWidth -= line.lastCharacter().trackingOffset();
                 }
+                
+                if( this.original.line ){
+                    if( this.original.line.added ){
+                        line.on( 'added' , this.original.line.added );
+                    }
+                    if( this.original.line.click ){
+                        line.on( 'click' , this.original.line.click );
+                    }
+                    if( this.original.line.dblclick ){
+                        line.on( 'dblclick' , this.original.line.dblclick );
+                    }
+                    if( this.original.line.mousedown ){
+                        line.on( 'mousedown' , this.original.line.mousedown );
+                    }
+                    if( this.original.line.mouseout ){
+                        line.on( 'mouseout' , this.original.line.mouseout );
+                    }
+                    if( this.original.line.mouseover ){
+                        line.on( 'mouseover' , this.original.line.mouseover );
+                    }
+                    if( this.original.line.pressmove ){
+                        line.on( 'pressmove' , this.original.line.pressmove );
+                    }
+                    if( this.original.line.pressup ){
+                        line.on( 'pressup' , this.original.line.pressup );
+                    }
+                    if( this.original.line.removed ){
+                        line.on( 'removed' , this.original.line.removed );
+                    }
+                    if( this.original.line.rollout ){
+                        line.on( 'rollout' , this.original.line.rollout );
+                    }
+                    if( this.original.line.rollover ){
+                        line.on( 'rollover' , this.original.line.rollover );
+                    }
+                    if( this.original.line.tick ){
+                        line.on( 'tick' , this.original.line.tick );
+                    }
+                }
 
                 measuredHeight += line.measuredHeight;
                 
@@ -635,6 +715,45 @@ module txt {
             //BOTTOM ALIGNED
             }else if( this.align === a.BOTTOM_LEFT || this.align === a.BOTTOM_CENTER || this.align === a.BOTTOM_RIGHT  ){
                this.block.y = this.height - this.lines[ this.lines.length - 1 ].y + this.lines[ 0 ].measuredHeight* fnt.bottom / fnt.units;
+            }
+            
+            if( this.original.block ){
+                if( this.original.block.added ){
+                    this.block.on( 'added' , this.original.block.added );
+                }
+                if( this.original.block.click ){
+                    this.block.on( 'click' , this.original.block.click );
+                }
+                if( this.original.block.dblclick ){
+                    this.block.on( 'dblclick' , this.original.block.dblclick );
+                }
+                if( this.original.block.mousedown ){
+                    this.block.on( 'mousedown' , this.original.block.mousedown );
+                }
+                if( this.original.block.mouseout ){
+                    this.block.on( 'mouseout' , this.original.block.mouseout );
+                }
+                if( this.original.block.mouseover ){
+                    this.block.on( 'mouseover' , this.original.block.mouseover );
+                }
+                if( this.original.block.pressmove ){
+                    this.block.on( 'pressmove' , this.original.block.pressmove );
+                }
+                if( this.original.block.pressup ){
+                    this.block.on( 'pressup' , this.original.block.pressup );
+                }
+                if( this.original.block.removed ){
+                    this.block.on( 'removed' , this.original.block.removed );
+                }
+                if( this.original.block.rollout ){
+                    this.block.on( 'rollout' , this.original.block.rollout );
+                }
+                if( this.original.block.rollover ){
+                    this.block.on( 'rollover' , this.original.block.rollover );
+                }
+                if( this.original.block.tick ){
+                    this.block.on( 'tick' , this.original.block.tick );
+                }
             }
         }
 

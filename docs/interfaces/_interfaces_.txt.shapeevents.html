@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Style | txtjs</title>
+	<title>ShapeEvents | txtjs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -63,10 +63,10 @@
 					<a href="../modules/_interfaces_.txt.html">txt</a>
 				</li>
 				<li>
-					<a href="_interfaces_.txt.style.html">Style</a>
+					<a href="_interfaces_.txt.shapeevents.html">ShapeEvents</a>
 				</li>
 			</ul>
-			<h1>Interface Style</h1>
+			<h1>Interface ShapeEvents</h1>
 		</div>
 	</div>
 </header>
@@ -77,7 +77,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Style</span>
+						<span class="target">ShapeEvents</span>
 					</li>
 				</ul>
 			</section>
@@ -88,13 +88,18 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.style.html#charactercase" class="tsd-kind-icon">character<wbr>Case</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.style.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.style.html#font" class="tsd-kind-icon">font</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.style.html#size" class="tsd-kind-icon">size</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.style.html#strokecolor" class="tsd-kind-icon">stroke<wbr>Color</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.style.html#strokewidth" class="tsd-kind-icon">stroke<wbr>Width</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.style.html#tracking" class="tsd-kind-icon">tracking</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#added" class="tsd-kind-icon">added</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#click" class="tsd-kind-icon">click</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#dblclick" class="tsd-kind-icon">dblclick</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#mousedown" class="tsd-kind-icon">mousedown</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#mouseout" class="tsd-kind-icon">mouseout</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#mouseover" class="tsd-kind-icon">mouseover</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#pressmove" class="tsd-kind-icon">pressmove</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#pressup" class="tsd-kind-icon">pressup</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#removed" class="tsd-kind-icon">removed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#rollout" class="tsd-kind-icon">rollout</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#rollover" class="tsd-kind-icon">rollover</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_interfaces_.txt.shapeevents.html#tick" class="tsd-kind-icon">tick</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,72 +108,122 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="charactercase" class="tsd-anchor"></a>
-					<h3>character<wbr>Case</h3>
-					<div class="tsd-signature tsd-kind-icon">character<wbr>Case<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="added" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> added</h3>
+					<div class="tsd-signature tsd-kind-icon">added<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L7">Interfaces.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L35">Interfaces.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="fillcolor" class="tsd-anchor"></a>
-					<h3>fill<wbr>Color</h3>
-					<div class="tsd-signature tsd-kind-icon">fill<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="click" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> click</h3>
+					<div class="tsd-signature tsd-kind-icon">click<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L8">Interfaces.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L36">Interfaces.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="font" class="tsd-anchor"></a>
-					<h3>font</h3>
-					<div class="tsd-signature tsd-kind-icon">font<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="dblclick" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> dblclick</h3>
+					<div class="tsd-signature tsd-kind-icon">dblclick<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L5">Interfaces.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L37">Interfaces.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="size" class="tsd-anchor"></a>
-					<h3>size</h3>
-					<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="mousedown" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> mousedown</h3>
+					<div class="tsd-signature tsd-kind-icon">mousedown<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L4">Interfaces.ts:4</a></li>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L38">Interfaces.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="strokecolor" class="tsd-anchor"></a>
-					<h3>stroke<wbr>Color</h3>
-					<div class="tsd-signature tsd-kind-icon">stroke<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="mouseout" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> mouseout</h3>
+					<div class="tsd-signature tsd-kind-icon">mouseout<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L9">Interfaces.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L39">Interfaces.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="strokewidth" class="tsd-anchor"></a>
-					<h3>stroke<wbr>Width</h3>
-					<div class="tsd-signature tsd-kind-icon">stroke<wbr>Width<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="mouseover" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> mouseover</h3>
+					<div class="tsd-signature tsd-kind-icon">mouseover<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L10">Interfaces.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L40">Interfaces.ts:40</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="tracking" class="tsd-anchor"></a>
-					<h3>tracking</h3>
-					<div class="tsd-signature tsd-kind-icon">tracking<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="pressmove" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pressmove</h3>
+					<div class="tsd-signature tsd-kind-icon">pressmove<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L6">Interfaces.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L41">Interfaces.ts:41</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="pressup" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pressup</h3>
+					<div class="tsd-signature tsd-kind-icon">pressup<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L42">Interfaces.ts:42</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="removed" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> removed</h3>
+					<div class="tsd-signature tsd-kind-icon">removed<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L43">Interfaces.ts:43</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="rollout" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> rollout</h3>
+					<div class="tsd-signature tsd-kind-icon">rollout<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L44">Interfaces.ts:44</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="rollover" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> rollover</h3>
+					<div class="tsd-signature tsd-kind-icon">rollover<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L45">Interfaces.ts:45</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="tick" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> tick</h3>
+					<div class="tsd-signature tsd-kind-icon">tick<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.txt.eventcallback.html" class="tsd-signature-type">EventCallback</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/diverted247/txtjs/blob/master/src/txt/Interfaces.ts#L46">Interfaces.ts:46</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -246,39 +301,54 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_interfaces_.txt.point.html" class="tsd-kind-icon">Point</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_interfaces_.txt.shapeevents.html" class="tsd-kind-icon">Shape<wbr>Events</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_interfaces_.txt.style.html" class="tsd-kind-icon">Style</a>
+						<a href="_interfaces_.txt.shapeevents.html" class="tsd-kind-icon">Shape<wbr>Events</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_interfaces_.txt.style.html#charactercase" class="tsd-kind-icon">character<wbr>Case</a>
+								<a href="_interfaces_.txt.shapeevents.html#added" class="tsd-kind-icon">added</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_interfaces_.txt.style.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a>
+								<a href="_interfaces_.txt.shapeevents.html#click" class="tsd-kind-icon">click</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_interfaces_.txt.style.html#font" class="tsd-kind-icon">font</a>
+								<a href="_interfaces_.txt.shapeevents.html#dblclick" class="tsd-kind-icon">dblclick</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_interfaces_.txt.style.html#size" class="tsd-kind-icon">size</a>
+								<a href="_interfaces_.txt.shapeevents.html#mousedown" class="tsd-kind-icon">mousedown</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_interfaces_.txt.style.html#strokecolor" class="tsd-kind-icon">stroke<wbr>Color</a>
+								<a href="_interfaces_.txt.shapeevents.html#mouseout" class="tsd-kind-icon">mouseout</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_interfaces_.txt.style.html#strokewidth" class="tsd-kind-icon">stroke<wbr>Width</a>
+								<a href="_interfaces_.txt.shapeevents.html#mouseover" class="tsd-kind-icon">mouseover</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_interfaces_.txt.style.html#tracking" class="tsd-kind-icon">tracking</a>
+								<a href="_interfaces_.txt.shapeevents.html#pressmove" class="tsd-kind-icon">pressmove</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_interfaces_.txt.shapeevents.html#pressup" class="tsd-kind-icon">pressup</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_interfaces_.txt.shapeevents.html#removed" class="tsd-kind-icon">removed</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_interfaces_.txt.shapeevents.html#rollout" class="tsd-kind-icon">rollout</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_interfaces_.txt.shapeevents.html#rollover" class="tsd-kind-icon">rollover</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_interfaces_.txt.shapeevents.html#tick" class="tsd-kind-icon">tick</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_interfaces_.txt.style.html" class="tsd-kind-icon">Style</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_interfaces_.txt.wordevents.html" class="tsd-kind-icon">Word<wbr>Events</a>
 					</li>

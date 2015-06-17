@@ -19,9 +19,7 @@ var txt;
         Accessibility.update = function () {
             txt.Accessibility.timeout = null;
             var data = txt.Accessibility.data.slice(0);
-            data.sort(function (a, b) {
-                return a.accessibilityPriority - b.accessibilityPriority;
-            });
+            data.sort(function (a, b) { return a.accessibilityPriority - b.accessibilityPriority; });
             var len = data.length;
             var out = "";
             var currentCanvas = data[0].stage.canvas;
@@ -81,6 +79,7 @@ var txt;
             this.loaderId = null;
             this.style = null;
             this.debug = false;
+            this.original = null;
             this.words = [];
             this.lines = [];
             this.missingGlyphs = null;
@@ -89,6 +88,7 @@ var txt;
             this.accessibilityPriority = 2;
             this.accessibilityId = null;
             if (props) {
+                this.original = props;
                 this.set(props);
             }
             if (this.style == null) {
@@ -110,8 +110,7 @@ var txt;
         Text.prototype.render = function () {
             this.getStage().update();
         };
-        Text.prototype.complete = function () {
-        };
+        Text.prototype.complete = function () { };
         Text.prototype.fontLoaded = function (font) {
             this.layout();
         };
@@ -176,6 +175,7 @@ var txt;
             this.complete();
         };
         Text.prototype.characterLayout = function () {
+            //characterlayout adds Charcters to words and measures true height. LineHeight is not a factor til Line layout.
             var len = this.text.length;
             var char;
             var defaultStyle = {
@@ -232,6 +232,44 @@ var txt;
                     return false;
                 }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
+                if (this.original.character) {
+                    if (this.original.character.added) {
+                        char.on('added', this.original.character.added);
+                    }
+                    if (this.original.character.click) {
+                        char.on('click', this.original.character.click);
+                    }
+                    if (this.original.character.dblclick) {
+                        char.on('dblclick', this.original.character.dblclick);
+                    }
+                    if (this.original.character.mousedown) {
+                        char.on('mousedown', this.original.character.mousedown);
+                    }
+                    if (this.original.character.mouseout) {
+                        char.on('mouseout', this.original.character.mouseout);
+                    }
+                    if (this.original.character.mouseover) {
+                        char.on('mouseover', this.original.character.mouseover);
+                    }
+                    if (this.original.character.pressmove) {
+                        char.on('pressmove', this.original.character.pressmove);
+                    }
+                    if (this.original.character.pressup) {
+                        char.on('pressup', this.original.character.pressup);
+                    }
+                    if (this.original.character.removed) {
+                        char.on('removed', this.original.character.removed);
+                    }
+                    if (this.original.character.rollout) {
+                        char.on('rollout', this.original.character.rollout);
+                    }
+                    if (this.original.character.rollover) {
+                        char.on('rollover', this.original.character.rollover);
+                    }
+                    if (this.original.character.tick) {
+                        char.on('tick', this.original.character.tick);
+                    }
+                }
                 if (char.missing) {
                     if (this.missingGlyphs == null) {
                         this.missingGlyphs = [];
@@ -306,6 +344,44 @@ var txt;
             for (var i = 0; i < len; i++) {
                 currentWord = this.words[i];
                 currentWord.x = hPosition;
+                if (this.original.word) {
+                    if (this.original.word.added) {
+                        currentWord.on('added', this.original.word.added);
+                    }
+                    if (this.original.word.click) {
+                        currentWord.on('click', this.original.word.click);
+                    }
+                    if (this.original.word.dblclick) {
+                        currentWord.on('dblclick', this.original.word.dblclick);
+                    }
+                    if (this.original.word.mousedown) {
+                        currentWord.on('mousedown', this.original.word.mousedown);
+                    }
+                    if (this.original.word.mouseout) {
+                        currentWord.on('mouseout', this.original.word.mouseout);
+                    }
+                    if (this.original.word.mouseover) {
+                        currentWord.on('mouseover', this.original.word.mouseover);
+                    }
+                    if (this.original.word.pressmove) {
+                        currentWord.on('pressmove', this.original.word.pressmove);
+                    }
+                    if (this.original.word.pressup) {
+                        currentWord.on('pressup', this.original.word.pressup);
+                    }
+                    if (this.original.word.removed) {
+                        currentWord.on('removed', this.original.word.removed);
+                    }
+                    if (this.original.word.rollout) {
+                        currentWord.on('rollout', this.original.word.rollout);
+                    }
+                    if (this.original.word.rollover) {
+                        currentWord.on('rollover', this.original.word.rollover);
+                    }
+                    if (this.original.word.tick) {
+                        currentWord.on('tick', this.original.word.tick);
+                    }
+                }
                 if (firstLine) {
                     vPosition = currentWord.measuredHeight;
                 }
@@ -442,6 +518,44 @@ var txt;
             var len = this.lines.length;
             for (var i = 0; i < len; i++) {
                 line = this.lines[i];
+                if (this.original.line) {
+                    if (this.original.line.added) {
+                        line.on('added', this.original.line.added);
+                    }
+                    if (this.original.line.click) {
+                        line.on('click', this.original.line.click);
+                    }
+                    if (this.original.line.dblclick) {
+                        line.on('dblclick', this.original.line.dblclick);
+                    }
+                    if (this.original.line.mousedown) {
+                        line.on('mousedown', this.original.line.mousedown);
+                    }
+                    if (this.original.line.mouseout) {
+                        line.on('mouseout', this.original.line.mouseout);
+                    }
+                    if (this.original.line.mouseover) {
+                        line.on('mouseover', this.original.line.mouseover);
+                    }
+                    if (this.original.line.pressmove) {
+                        line.on('pressmove', this.original.line.pressmove);
+                    }
+                    if (this.original.line.pressup) {
+                        line.on('pressup', this.original.line.pressup);
+                    }
+                    if (this.original.line.removed) {
+                        line.on('removed', this.original.line.removed);
+                    }
+                    if (this.original.line.rollout) {
+                        line.on('rollout', this.original.line.rollout);
+                    }
+                    if (this.original.line.rollover) {
+                        line.on('rollover', this.original.line.rollover);
+                    }
+                    if (this.original.line.tick) {
+                        line.on('tick', this.original.line.tick);
+                    }
+                }
                 if (line.lastWord() != undefined && line.lastWord().lastCharacter()) {
                     line.measuredWidth -= line.lastWord().lastCharacter().trackingOffset();
                 }
@@ -473,6 +587,44 @@ var txt;
             }
             else if (this.align === a.BOTTOM_LEFT || this.align === a.BOTTOM_CENTER || this.align === a.BOTTOM_RIGHT) {
                 this.block.y = this.height - this.lines[this.lines.length - 1].y + this.lines[0].measuredHeight * fnt.bottom / fnt.units;
+            }
+            if (this.original.block) {
+                if (this.original.block.added) {
+                    this.block.on('added', this.original.block.added);
+                }
+                if (this.original.block.click) {
+                    this.block.on('click', this.original.block.click);
+                }
+                if (this.original.block.dblclick) {
+                    this.block.on('dblclick', this.original.block.dblclick);
+                }
+                if (this.original.block.mousedown) {
+                    this.block.on('mousedown', this.original.block.mousedown);
+                }
+                if (this.original.block.mouseout) {
+                    this.block.on('mouseout', this.original.block.mouseout);
+                }
+                if (this.original.block.mouseover) {
+                    this.block.on('mouseover', this.original.block.mouseover);
+                }
+                if (this.original.block.pressmove) {
+                    this.block.on('pressmove', this.original.block.pressmove);
+                }
+                if (this.original.block.pressup) {
+                    this.block.on('pressup', this.original.block.pressup);
+                }
+                if (this.original.block.removed) {
+                    this.block.on('removed', this.original.block.removed);
+                }
+                if (this.original.block.rollout) {
+                    this.block.on('rollout', this.original.block.rollout);
+                }
+                if (this.original.block.rollover) {
+                    this.block.on('rollover', this.original.block.rollover);
+                }
+                if (this.original.block.tick) {
+                    this.block.on('tick', this.original.block.tick);
+                }
             }
         };
         return Text;
@@ -553,7 +705,7 @@ var txt;
             this.measuredHeight = (this._font.ascent - this._font.descent) * this.scaleX;
             this.measuredWidth = this.scaleX * this._glyph.offset * this._font.units;
             var ha = new createjs.Shape();
-            ha.graphics.drawRect(0, this._font.descent, this._glyph.offset * this._font.units, this._font.ascent - this._font.descent);
+            ha.graphics.beginFill('#000').drawRect(0, this._font.descent, this._glyph.offset * this._font.units, this._font.ascent - this._font.descent);
             this.hitArea = ha;
         }
         Character.prototype.setGlyph = function (glyph) {
@@ -683,9 +835,7 @@ var txt;
                         return;
                 }
             }
-            window.setTimeout(function () {
-                loader._target.fontLoaded();
-            }, 1);
+            window.setTimeout(function () { loader._target.fontLoaded(); }, 1);
         };
         FontLoader.loadFont = function (fontName, loader) {
             var fonts = txt.FontLoader.fonts;
@@ -1317,8 +1467,7 @@ var txt;
                 txt.FontLoader.load(this, fonts);
             }
         }
-        CharacterText.prototype.complete = function () {
-        };
+        CharacterText.prototype.complete = function () { };
         CharacterText.prototype.fontLoaded = function () {
             this.layout();
         };
@@ -1462,7 +1611,8 @@ var txt;
                 current = charMetrics[i];
                 metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
                 metricRealWidth = metricRealWidth + ((current.offset + current.kerning) * current.size);
-                metricRealWidthTracking = metricRealWidthTracking + ((current.offset + current.kerning + current.tracking) * current.size);
+                metricRealWidthTracking = metricRealWidthTracking +
+                    ((current.offset + current.kerning + current.tracking) * current.size);
             }
             if (metricRealWidth > this.width) {
                 if (this.autoReduce === true) {
@@ -1513,6 +1663,7 @@ var txt;
             return this.width;
         };
         CharacterText.prototype.characterLayout = function () {
+            //characterlayout adds Charcters to lines. LineHeight IS a factor given lack of Words.
             var len = this.text.length;
             var char;
             var defaultStyle = {
@@ -1594,6 +1745,44 @@ var txt;
                     return false;
                 }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
+                if (this.original.character) {
+                    if (this.original.character.added) {
+                        char.on('added', this.original.character.added);
+                    }
+                    if (this.original.character.click) {
+                        char.on('click', this.original.character.click);
+                    }
+                    if (this.original.character.dblclick) {
+                        char.on('dblclick', this.original.character.dblclick);
+                    }
+                    if (this.original.character.mousedown) {
+                        char.on('mousedown', this.original.character.mousedown);
+                    }
+                    if (this.original.character.mouseout) {
+                        char.on('mouseout', this.original.character.mouseout);
+                    }
+                    if (this.original.character.mouseover) {
+                        char.on('mouseover', this.original.character.mouseover);
+                    }
+                    if (this.original.character.pressmove) {
+                        char.on('pressmove', this.original.character.pressmove);
+                    }
+                    if (this.original.character.pressup) {
+                        char.on('pressup', this.original.character.pressup);
+                    }
+                    if (this.original.character.removed) {
+                        char.on('removed', this.original.character.removed);
+                    }
+                    if (this.original.character.rollout) {
+                        char.on('rollout', this.original.character.rollout);
+                    }
+                    if (this.original.character.rollover) {
+                        char.on('rollover', this.original.character.rollover);
+                    }
+                    if (this.original.character.tick) {
+                        char.on('tick', this.original.character.tick);
+                    }
+                }
                 if (char.missing) {
                     if (this.missingGlyphs == null) {
                         this.missingGlyphs = [];
@@ -1742,6 +1931,44 @@ var txt;
                 if (line.lastCharacter()) {
                     line.measuredWidth -= line.lastCharacter().trackingOffset();
                 }
+                if (this.original.line) {
+                    if (this.original.line.added) {
+                        line.on('added', this.original.line.added);
+                    }
+                    if (this.original.line.click) {
+                        line.on('click', this.original.line.click);
+                    }
+                    if (this.original.line.dblclick) {
+                        line.on('dblclick', this.original.line.dblclick);
+                    }
+                    if (this.original.line.mousedown) {
+                        line.on('mousedown', this.original.line.mousedown);
+                    }
+                    if (this.original.line.mouseout) {
+                        line.on('mouseout', this.original.line.mouseout);
+                    }
+                    if (this.original.line.mouseover) {
+                        line.on('mouseover', this.original.line.mouseover);
+                    }
+                    if (this.original.line.pressmove) {
+                        line.on('pressmove', this.original.line.pressmove);
+                    }
+                    if (this.original.line.pressup) {
+                        line.on('pressup', this.original.line.pressup);
+                    }
+                    if (this.original.line.removed) {
+                        line.on('removed', this.original.line.removed);
+                    }
+                    if (this.original.line.rollout) {
+                        line.on('rollout', this.original.line.rollout);
+                    }
+                    if (this.original.line.rollover) {
+                        line.on('rollover', this.original.line.rollover);
+                    }
+                    if (this.original.line.tick) {
+                        line.on('tick', this.original.line.tick);
+                    }
+                }
                 measuredHeight += line.measuredHeight;
                 if (this.align === a.TOP_CENTER) {
                     line.x = (this.width - line.measuredWidth) / 2;
@@ -1775,6 +2002,44 @@ var txt;
             }
             else if (this.align === a.BOTTOM_LEFT || this.align === a.BOTTOM_CENTER || this.align === a.BOTTOM_RIGHT) {
                 this.block.y = this.height - this.lines[this.lines.length - 1].y + this.lines[0].measuredHeight * fnt.bottom / fnt.units;
+            }
+            if (this.original.block) {
+                if (this.original.block.added) {
+                    this.block.on('added', this.original.block.added);
+                }
+                if (this.original.block.click) {
+                    this.block.on('click', this.original.block.click);
+                }
+                if (this.original.block.dblclick) {
+                    this.block.on('dblclick', this.original.block.dblclick);
+                }
+                if (this.original.block.mousedown) {
+                    this.block.on('mousedown', this.original.block.mousedown);
+                }
+                if (this.original.block.mouseout) {
+                    this.block.on('mouseout', this.original.block.mouseout);
+                }
+                if (this.original.block.mouseover) {
+                    this.block.on('mouseover', this.original.block.mouseover);
+                }
+                if (this.original.block.pressmove) {
+                    this.block.on('pressmove', this.original.block.pressmove);
+                }
+                if (this.original.block.pressup) {
+                    this.block.on('pressup', this.original.block.pressup);
+                }
+                if (this.original.block.removed) {
+                    this.block.on('removed', this.original.block.removed);
+                }
+                if (this.original.block.rollout) {
+                    this.block.on('rollout', this.original.block.rollout);
+                }
+                if (this.original.block.rollover) {
+                    this.block.on('rollover', this.original.block.rollover);
+                }
+                if (this.original.block.tick) {
+                    this.block.on('tick', this.original.block.tick);
+                }
             }
         };
         return CharacterText;
@@ -1823,9 +2088,9 @@ var txt;
             this.start = 0;
             this.end = null;
             this.flipped = false;
-            this.fit = 0 /* Rainbow */;
-            this.align = 0 /* Center */;
-            this.valign = 3 /* BaseLine */;
+            this.fit = txt.PathFit.Rainbow;
+            this.align = txt.PathAlign.Center;
+            this.valign = txt.VerticalAlign.BaseLine;
             this.missingGlyphs = null;
             this.renderCycle = true;
             this.valignPercent = 1;
@@ -1858,8 +2123,7 @@ var txt;
             }
             this.pathPoints = new txt.Path(this.path, this.start, this.end, this.flipped, this.fit, this.align);
         }
-        PathText.prototype.complete = function () {
-        };
+        PathText.prototype.complete = function () { };
         PathText.prototype.setPath = function (path) {
             this.path = path;
             this.pathPoints.path = this.path;
@@ -1881,13 +2145,13 @@ var txt;
             this.pathPoints.update();
         };
         PathText.prototype.setFit = function (fit) {
-            if (fit === void 0) { fit = 0 /* Rainbow */; }
+            if (fit === void 0) { fit = txt.PathFit.Rainbow; }
             this.fit = fit;
             this.pathPoints.fit = this.fit;
             this.pathPoints.update();
         };
         PathText.prototype.setAlign = function (align) {
-            if (align === void 0) { align = 0 /* Center */; }
+            if (align === void 0) { align = txt.PathAlign.Center; }
             this.align = align;
             this.pathPoints.align = this.align;
             this.pathPoints.update();
@@ -2034,7 +2298,8 @@ var txt;
                 current = charMetrics[i];
                 metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
                 metricRealWidth = metricRealWidth + ((current.offset + current.kerning) * current.size);
-                metricRealWidthTracking = metricRealWidthTracking + ((current.offset + current.kerning + current.tracking) * current.size);
+                metricRealWidthTracking = metricRealWidthTracking +
+                    ((current.offset + current.kerning + current.tracking) * current.size);
             }
             if (metricRealWidth > width) {
                 if (this.autoReduce === true) {
@@ -2126,6 +2391,44 @@ var txt;
                     hPosition = this.initialOffset + this.trackingOffset(this.initialTracking, currentStyle.size, txt.FontLoader.getFont(currentStyle.font).units);
                 }
                 char = new txt.Character(this.text.charAt(i), currentStyle, i);
+                if (this.original.character) {
+                    if (this.original.character.added) {
+                        char.on('added', this.original.character.added);
+                    }
+                    if (this.original.character.click) {
+                        char.on('click', this.original.character.click);
+                    }
+                    if (this.original.character.dblclick) {
+                        char.on('dblclick', this.original.character.dblclick);
+                    }
+                    if (this.original.character.mousedown) {
+                        char.on('mousedown', this.original.character.mousedown);
+                    }
+                    if (this.original.character.mouseout) {
+                        char.on('mouseout', this.original.character.mouseout);
+                    }
+                    if (this.original.character.mouseover) {
+                        char.on('mouseover', this.original.character.mouseover);
+                    }
+                    if (this.original.character.pressmove) {
+                        char.on('pressmove', this.original.character.pressmove);
+                    }
+                    if (this.original.character.pressup) {
+                        char.on('pressup', this.original.character.pressup);
+                    }
+                    if (this.original.character.removed) {
+                        char.on('removed', this.original.character.removed);
+                    }
+                    if (this.original.character.rollout) {
+                        char.on('rollout', this.original.character.rollout);
+                    }
+                    if (this.original.character.rollover) {
+                        char.on('rollover', this.original.character.rollover);
+                    }
+                    if (this.original.character.tick) {
+                        char.on('tick', this.original.character.tick);
+                    }
+                }
                 if (char.missing) {
                     if (this.missingGlyphs == null) {
                         this.missingGlyphs = [];
@@ -2187,7 +2490,7 @@ var txt;
                     nextRotation = true;
                 }
                 char.rotation = pathPoint.rotation;
-                if (this.valign == 3 /* BaseLine */) {
+                if (this.valign == txt.VerticalAlign.BaseLine) {
                     char.x = pathPoint.x;
                     char.y = pathPoint.y;
                     if (pathPoint.offsetX) {
@@ -2216,25 +2519,25 @@ var txt;
                     char.parent.removeChild(char);
                     offsetChild.addChild(char);
                     char.x = 0;
-                    if (this.valign == 0 /* Top */) {
+                    if (this.valign == txt.VerticalAlign.Top) {
                         char.y = char.size;
                     }
-                    else if (this.valign == 4 /* Bottom */) {
+                    else if (this.valign == txt.VerticalAlign.Bottom) {
                         char.y = char._font.descent / char._font.units * char.size;
                     }
-                    else if (this.valign == 1 /* CapHeight */) {
+                    else if (this.valign == txt.VerticalAlign.CapHeight) {
                         char.y = char._font['cap-height'] / char._font.units * char.size;
                     }
-                    else if (this.valign == 5 /* XHeight */) {
+                    else if (this.valign == txt.VerticalAlign.XHeight) {
                         char.y = char._font['x-height'] / char._font.units * char.size;
                     }
-                    else if (this.valign == 6 /* Ascent */) {
+                    else if (this.valign == txt.VerticalAlign.Ascent) {
                         char.y = char._font.ascent / char._font.units * char.size;
                     }
-                    else if (this.valign == 2 /* Center */) {
+                    else if (this.valign == txt.VerticalAlign.Center) {
                         char.y = char._font['cap-height'] / char._font.units * char.size / 2;
                     }
-                    else if (this.valign == 7 /* Percent */) {
+                    else if (this.valign == txt.VerticalAlign.Percent) {
                         char.y = this.valignPercent * char.size;
                     }
                     else {
@@ -2242,6 +2545,44 @@ var txt;
                     }
                     char.rotation = 0;
                     this.addChild(offsetChild);
+                }
+            }
+            if (this.original.block) {
+                if (this.original.block.added) {
+                    this.block.on('added', this.original.block.added);
+                }
+                if (this.original.block.click) {
+                    this.block.on('click', this.original.block.click);
+                }
+                if (this.original.block.dblclick) {
+                    this.block.on('dblclick', this.original.block.dblclick);
+                }
+                if (this.original.block.mousedown) {
+                    this.block.on('mousedown', this.original.block.mousedown);
+                }
+                if (this.original.block.mouseout) {
+                    this.block.on('mouseout', this.original.block.mouseout);
+                }
+                if (this.original.block.mouseover) {
+                    this.block.on('mouseover', this.original.block.mouseover);
+                }
+                if (this.original.block.pressmove) {
+                    this.block.on('pressmove', this.original.block.pressmove);
+                }
+                if (this.original.block.pressup) {
+                    this.block.on('pressup', this.original.block.pressup);
+                }
+                if (this.original.block.removed) {
+                    this.block.on('removed', this.original.block.removed);
+                }
+                if (this.original.block.rollout) {
+                    this.block.on('rollout', this.original.block.rollout);
+                }
+                if (this.original.block.rollover) {
+                    this.block.on('rollover', this.original.block.rollover);
+                }
+                if (this.original.block.tick) {
+                    this.block.on('tick', this.original.block.tick);
                 }
             }
             return true;
@@ -2293,8 +2634,8 @@ var txt;
             if (start === void 0) { start = 0; }
             if (end === void 0) { end = null; }
             if (flipped === void 0) { flipped = false; }
-            if (fit === void 0) { fit = 0 /* Rainbow */; }
-            if (align === void 0) { align = 0 /* Center */; }
+            if (fit === void 0) { fit = txt.PathFit.Rainbow; }
+            if (align === void 0) { align = txt.PathAlign.Center; }
             this.pathElement = null;
             this.path = null;
             this.start = 0;
@@ -2302,8 +2643,8 @@ var txt;
             this.end = null;
             this.angles = null;
             this.flipped = false;
-            this.fit = 0 /* Rainbow */;
-            this.align = 0 /* Center */;
+            this.fit = txt.PathFit.Rainbow;
+            this.align = txt.PathAlign.Center;
             this.length = null;
             this.realLength = null;
             this.closed = false;
@@ -2448,26 +2789,26 @@ var txt;
             if (this.closed == false) {
                 if (this.flipped == false) {
                     if (this.start > this.end) {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
                         direction = false;
                     }
                     else {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart + distance;
@@ -2475,26 +2816,26 @@ var txt;
                 }
                 else {
                     if (this.start > this.end) {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
                         direction = false;
                     }
                     else {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart - distance;
@@ -2504,28 +2845,28 @@ var txt;
             else if (this.clockwise == false) {
                 if (this.flipped == false) {
                     if (this.start > this.end) {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
                         direction = false;
                     }
                     else {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                             position = realStart - distance;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                             position = realStart - distance;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start - this.realLength - characterLength;
                             position = realStart - distance;
                         }
@@ -2537,15 +2878,15 @@ var txt;
                 }
                 else {
                     if (this.start > this.end) {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                             position = realStart + distance;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                             position = realStart + distance;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start + this.realLength - characterLength;
                             position = realStart + distance;
                         }
@@ -2554,13 +2895,13 @@ var txt;
                         }
                     }
                     else {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart + distance;
@@ -2570,15 +2911,15 @@ var txt;
             else {
                 if (this.flipped == false) {
                     if (this.start > this.end) {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                             position = realStart - distance;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                             position = realStart - distance;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start - this.realLength - characterLength;
                             position = realStart - distance;
                         }
@@ -2588,13 +2929,13 @@ var txt;
                         direction = false;
                     }
                     else {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
@@ -2603,27 +2944,27 @@ var txt;
                 }
                 else {
                     if (this.start > this.end) {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart + distance;
                     }
                     else {
-                        if (this.align == 2 /* Left */) {
+                        if (this.align == PathAlign.Left) {
                             realStart = this.start;
                             position = realStart + distance;
                         }
-                        else if (this.align == 0 /* Center */) {
+                        else if (this.align == PathAlign.Center) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                             position = realStart + distance;
                         }
-                        else if (this.align == 1 /* Right */) {
+                        else if (this.align == PathAlign.Right) {
                             realStart = this.start + this.realLength - characterLength;
                             position = realStart + distance;
                         }
