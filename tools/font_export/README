@@ -2,7 +2,9 @@ DO NOT STEAL FONTS.
 DO NOT EXPORT FONTS WITHOUT A PROPER LICENSE.
 
 
-1. Install Python, fontforge
+1. Install Python, fontforge, and install BeautifulSoup4
+
+   $ pip install beautifulsoup4
 
 2. Create the following Directories: font, source_fonts, svg, svgff, web_fonts
 
