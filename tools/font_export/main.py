@@ -115,7 +115,7 @@ def svg_to_txt():
         font_id = '_'.join( file_name.split( ' ' ) )
         print( file_name )
         svg_data = open( j , 'r' ).read()
-        soup = BeautifulSoup( svg_data , 'xml' )
+        soup = BeautifulSoup( svg_data , 'lxml' )
         out = ''
         #track what font glyphs exist and only add in dependent kerning.
         font_glyphs = {}
@@ -210,12 +210,12 @@ def svg_to_txt():
 
                 if CHARS.has_key( unicode_str ) == False:
                     #print missing chars for whitelist inclusion
-                    #if i.has_attr('glyph-name'):
-                    #    print( 'CHARS[ ' + unicode_str + ' ] = 1 # ' + i['glyph-name'] + " " + i['unicode'] )
-                    #else:
-                    #    print( 'CHARS[ ' + unicode_str + ' ] = 1 # ' + i['unicode'] )
+                    if i.has_attr('glyph-name'):
+                        print( 'CHARS[ "' + unicode_str + '" ] = 1' )
+                    else:
+                        print( 'CHARS[ "' + unicode_str + '" ] = 1 ' )
                     continue
-
+                
                 #normal chars
                 if CHARS[ unicode_str ] == 1:
                     if i.has_attr('horiz-adv-x') and i.has_attr('d'):

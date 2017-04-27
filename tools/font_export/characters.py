@@ -1124,4 +1124,4 @@ CHARS[ '‶' ] = '8246' # ‶
 #CHARS[ 'ffl' ] = 'ffl' # ffl ﬄ
 
 #CHARS[ '64262' ] = 'st' # st ﬆ
-#CHARS[ 'st' ] = 'st' # st ﬆ
+#CHARS[ 'st' ] = 'st' # st

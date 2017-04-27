@@ -38,8 +38,18 @@ module txt {
         }
 
         getKerning( characterCode:number , size:number ){
+            var out = -( this.kerning[ characterCode ] * size );
+            if( isNaN( out ) ){
+                return 0;
+            }
+            if( isNaN( characterCode ) ){
+                return 0;
+            }
+            if( isNaN( size ) ){
+                return 0;
+            }
             if( this.kerning[ characterCode ] != undefined ){
-                return -( this.kerning[ characterCode ] * size );
+                return out;
             }
             return 0;
         }

@@ -19,7 +19,9 @@ var txt;
         Accessibility.update = function () {
             txt.Accessibility.timeout = null;
             var data = txt.Accessibility.data.slice(0);
-            data.sort(function (a, b) { return a.accessibilityPriority - b.accessibilityPriority; });
+            data.sort(function (a, b) {
+                return a.accessibilityPriority - b.accessibilityPriority;
+            });
             var len = data.length;
             var out = "";
             var currentCanvas = data[0].stage.canvas;
@@ -110,7 +112,8 @@ var txt;
         Text.prototype.render = function () {
             this.getStage().update();
         };
-        Text.prototype.complete = function () { };
+        Text.prototype.complete = function () {
+        };
         Text.prototype.fontLoaded = function (font) {
             this.layout();
         };
@@ -175,7 +178,6 @@ var txt;
             this.complete();
         };
         Text.prototype.characterLayout = function () {
-            //characterlayout adds Charcters to words and measures true height. LineHeight is not a factor til Line layout.
             var len = this.text.length;
             var char;
             var defaultStyle = {
@@ -779,8 +781,18 @@ var txt;
             return true;
         };
         Glyph.prototype.getKerning = function (characterCode, size) {
+            var out = -(this.kerning[characterCode] * size);
+            if (isNaN(out)) {
+                return 0;
+            }
+            if (isNaN(characterCode)) {
+                return 0;
+            }
+            if (isNaN(size)) {
+                return 0;
+            }
             if (this.kerning[characterCode] != undefined) {
-                return -(this.kerning[characterCode] * size);
+                return out;
             }
             return 0;
         };
@@ -835,7 +847,9 @@ var txt;
                         return;
                 }
             }
-            window.setTimeout(function () { loader._target.fontLoaded(); }, 1);
+            window.setTimeout(function () {
+                loader._target.fontLoaded();
+            }, 1);
         };
         FontLoader.loadFont = function (fontName, loader) {
             var fonts = txt.FontLoader.fonts;
@@ -1467,7 +1481,8 @@ var txt;
                 txt.FontLoader.load(this, fonts);
             }
         }
-        CharacterText.prototype.complete = function () { };
+        CharacterText.prototype.complete = function () {
+        };
         CharacterText.prototype.fontLoaded = function () {
             this.layout();
         };
@@ -1611,8 +1626,7 @@ var txt;
                 current = charMetrics[i];
                 metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
                 metricRealWidth = metricRealWidth + ((current.offset + current.kerning) * current.size);
-                metricRealWidthTracking = metricRealWidthTracking +
-                    ((current.offset + current.kerning + current.tracking) * current.size);
+                metricRealWidthTracking = metricRealWidthTracking + ((current.offset + current.kerning + current.tracking) * current.size);
             }
             if (metricRealWidth > this.width) {
                 if (this.autoReduce === true) {
@@ -1663,7 +1677,6 @@ var txt;
             return this.width;
         };
         CharacterText.prototype.characterLayout = function () {
-            //characterlayout adds Charcters to lines. LineHeight IS a factor given lack of Words.
             var len = this.text.length;
             var char;
             var defaultStyle = {
@@ -2088,9 +2101,9 @@ var txt;
             this.start = 0;
             this.end = null;
             this.flipped = false;
-            this.fit = txt.PathFit.Rainbow;
-            this.align = txt.PathAlign.Center;
-            this.valign = txt.VerticalAlign.BaseLine;
+            this.fit = 0 /* Rainbow */;
+            this.align = 0 /* Center */;
+            this.valign = 3 /* BaseLine */;
             this.missingGlyphs = null;
             this.renderCycle = true;
             this.valignPercent = 1;
@@ -2123,7 +2136,8 @@ var txt;
             }
             this.pathPoints = new txt.Path(this.path, this.start, this.end, this.flipped, this.fit, this.align);
         }
-        PathText.prototype.complete = function () { };
+        PathText.prototype.complete = function () {
+        };
         PathText.prototype.setPath = function (path) {
             this.path = path;
             this.pathPoints.path = this.path;
@@ -2145,13 +2159,13 @@ var txt;
             this.pathPoints.update();
         };
         PathText.prototype.setFit = function (fit) {
-            if (fit === void 0) { fit = txt.PathFit.Rainbow; }
+            if (fit === void 0) { fit = 0 /* Rainbow */; }
             this.fit = fit;
             this.pathPoints.fit = this.fit;
             this.pathPoints.update();
         };
         PathText.prototype.setAlign = function (align) {
-            if (align === void 0) { align = txt.PathAlign.Center; }
+            if (align === void 0) { align = 0 /* Center */; }
             this.align = align;
             this.pathPoints.align = this.align;
             this.pathPoints.update();
@@ -2298,8 +2312,7 @@ var txt;
                 current = charMetrics[i];
                 metricBaseWidth = metricBaseWidth + current.offset + current.kerning;
                 metricRealWidth = metricRealWidth + ((current.offset + current.kerning) * current.size);
-                metricRealWidthTracking = metricRealWidthTracking +
-                    ((current.offset + current.kerning + current.tracking) * current.size);
+                metricRealWidthTracking = metricRealWidthTracking + ((current.offset + current.kerning + current.tracking) * current.size);
             }
             if (metricRealWidth > width) {
                 if (this.autoReduce === true) {
@@ -2490,7 +2503,7 @@ var txt;
                     nextRotation = true;
                 }
                 char.rotation = pathPoint.rotation;
-                if (this.valign == txt.VerticalAlign.BaseLine) {
+                if (this.valign == 3 /* BaseLine */) {
                     char.x = pathPoint.x;
                     char.y = pathPoint.y;
                     if (pathPoint.offsetX) {
@@ -2519,25 +2532,25 @@ var txt;
                     char.parent.removeChild(char);
                     offsetChild.addChild(char);
                     char.x = 0;
-                    if (this.valign == txt.VerticalAlign.Top) {
+                    if (this.valign == 0 /* Top */) {
                         char.y = char.size;
                     }
-                    else if (this.valign == txt.VerticalAlign.Bottom) {
+                    else if (this.valign == 4 /* Bottom */) {
                         char.y = char._font.descent / char._font.units * char.size;
                     }
-                    else if (this.valign == txt.VerticalAlign.CapHeight) {
+                    else if (this.valign == 1 /* CapHeight */) {
                         char.y = char._font['cap-height'] / char._font.units * char.size;
                     }
-                    else if (this.valign == txt.VerticalAlign.XHeight) {
+                    else if (this.valign == 5 /* XHeight */) {
                         char.y = char._font['x-height'] / char._font.units * char.size;
                     }
-                    else if (this.valign == txt.VerticalAlign.Ascent) {
+                    else if (this.valign == 6 /* Ascent */) {
                         char.y = char._font.ascent / char._font.units * char.size;
                     }
-                    else if (this.valign == txt.VerticalAlign.Center) {
+                    else if (this.valign == 2 /* Center */) {
                         char.y = char._font['cap-height'] / char._font.units * char.size / 2;
                     }
-                    else if (this.valign == txt.VerticalAlign.Percent) {
+                    else if (this.valign == 7 /* Percent */) {
                         char.y = this.valignPercent * char.size;
                     }
                     else {
@@ -2634,8 +2647,8 @@ var txt;
             if (start === void 0) { start = 0; }
             if (end === void 0) { end = null; }
             if (flipped === void 0) { flipped = false; }
-            if (fit === void 0) { fit = txt.PathFit.Rainbow; }
-            if (align === void 0) { align = txt.PathAlign.Center; }
+            if (fit === void 0) { fit = 0 /* Rainbow */; }
+            if (align === void 0) { align = 0 /* Center */; }
             this.pathElement = null;
             this.path = null;
             this.start = 0;
@@ -2643,8 +2656,8 @@ var txt;
             this.end = null;
             this.angles = null;
             this.flipped = false;
-            this.fit = txt.PathFit.Rainbow;
-            this.align = txt.PathAlign.Center;
+            this.fit = 0 /* Rainbow */;
+            this.align = 0 /* Center */;
             this.length = null;
             this.realLength = null;
             this.closed = false;
@@ -2789,26 +2802,26 @@ var txt;
             if (this.closed == false) {
                 if (this.flipped == false) {
                     if (this.start > this.end) {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
                         direction = false;
                     }
                     else {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart + distance;
@@ -2816,26 +2829,26 @@ var txt;
                 }
                 else {
                     if (this.start > this.end) {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
                         direction = false;
                     }
                     else {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart - distance;
@@ -2845,28 +2858,28 @@ var txt;
             else if (this.clockwise == false) {
                 if (this.flipped == false) {
                     if (this.start > this.end) {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
                         direction = false;
                     }
                     else {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                             position = realStart - distance;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                             position = realStart - distance;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start - this.realLength - characterLength;
                             position = realStart - distance;
                         }
@@ -2878,15 +2891,15 @@ var txt;
                 }
                 else {
                     if (this.start > this.end) {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                             position = realStart + distance;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                             position = realStart + distance;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start + this.realLength - characterLength;
                             position = realStart + distance;
                         }
@@ -2895,13 +2908,13 @@ var txt;
                         }
                     }
                     else {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart + distance;
@@ -2911,15 +2924,15 @@ var txt;
             else {
                 if (this.flipped == false) {
                     if (this.start > this.end) {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                             position = realStart - distance;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                             position = realStart - distance;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start - this.realLength - characterLength;
                             position = realStart - distance;
                         }
@@ -2929,13 +2942,13 @@ var txt;
                         direction = false;
                     }
                     else {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start - (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start - this.realLength - characterLength;
                         }
                         position = realStart - distance;
@@ -2944,27 +2957,27 @@ var txt;
                 }
                 else {
                     if (this.start > this.end) {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start + this.realLength - characterLength;
                         }
                         position = realStart + distance;
                     }
                     else {
-                        if (this.align == PathAlign.Left) {
+                        if (this.align == 2 /* Left */) {
                             realStart = this.start;
                             position = realStart + distance;
                         }
-                        else if (this.align == PathAlign.Center) {
+                        else if (this.align == 0 /* Center */) {
                             realStart = this.start + (this.realLength - characterLength) / 2;
                             position = realStart + distance;
                         }
-                        else if (this.align == PathAlign.Right) {
+                        else if (this.align == 1 /* Right */) {
                             realStart = this.start + this.realLength - characterLength;
                             position = realStart + distance;
                         }
