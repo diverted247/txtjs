@@ -1,5 +1,4 @@
 module txt {
-
     export class Align{
         static TOP_LEFT:number = 0;
         static TOP_CENTER:number = 1;

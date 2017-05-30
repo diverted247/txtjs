@@ -3082,3 +3082,15 @@ var txt;
     })(createjs.Container);
     txt.Line = Line;
 })(txt || (txt = {}));
+var txt;
+(function (txt) {
+    var Info = (function () {
+        function Info() {
+        }
+        Info.VERSION = "0.8.5";
+        Info.LICENSE = "BSD-2-Clause";
+        Info.CONTACT = "ted@light.ly";
+        return Info;
+    })();
+    txt.Info = Info;
+})(txt || (txt = {}));

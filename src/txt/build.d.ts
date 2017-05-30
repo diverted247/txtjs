@@ -19,3 +19,4 @@
 /// <reference path='Path.ts' />
 /// <reference path='Word.ts' />
 /// <reference path='Line.ts' />
+/// <reference path='Info.ts' />

@@ -416,3 +416,10 @@ declare module txt {
         lastCharacter(): txt.Character;
     }
 }
+declare module txt {
+    class Info {
+        static VERSION: string;
+        static LICENSE: string;
+        static CONTACT: string;
+    }
+}
