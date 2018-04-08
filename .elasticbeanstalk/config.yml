@@ -1,0 +1,11 @@
+branch-defaults:
+  default:
+    environment: txtjs-env
+  master:
+    environment: txtjs-env
+global:
+  application_name: lightly
+  default_ec2_keyname: null
+  default_platform: php
+  default_region: us-west-2
+  profile: vu
